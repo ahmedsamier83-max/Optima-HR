@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام الحضور - Optima</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+:root{--p:#1a3c5e;--a:#c8a84b;--g:#27ae60;--r:#e74c3c;--w:#f39c12;--bg:#f0f4f8;--card:#fff;--tx:#1a2533;--mu:#6b7c93;--br:#dce3ec;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+.screen{display:none;} .screen.active{display:block;}
+header{background:linear-gradient(135deg,var(--p),#0d2440);color:#fff;padding:15px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.2);}
+.logo{display:flex;align-items:center;gap:11px;}
+.logo-ic{width:40px;height:40px;border-radius:9px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:var(--p);}
+.logo h1{font-size:16px;font-weight:700;} .logo p{font-size:11px;opacity:.65;}
+#clk{font-size:19px;font-weight:700;color:var(--a);} #dt{font-size:11px;opacity:.65;text-align:left;}
+.wrap{max-width:940px;margin:0 auto;padding:22px;}
+.card{background:var(--card);border-radius:13px;padding:22px;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid var(--br);margin-bottom:18px;}
+.ct{font-size:15px;font-weight:700;color:var(--p);margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+.btn{padding:11px 22px;border-radius:9px;border:none;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .17s;display:inline-flex;align-items:center;gap:6px;}
+.btn:active{transform:scale(.97);}
+.bp{background:var(--p);color:#fff;} .bp:hover{background:#0d2440;}
+.bg{background:var(--g);color:#fff;} .bg:hover{background:#1e8449;}
+.br2{background:var(--r);color:#fff;} .br2:hover{background:#c0392b;}
+.ba{background:var(--a);color:var(--p);}
+.bsm{padding:7px 13px;font-size:12px;border-radius:7px;}
+.bfl{width:100%;justify-content:center;}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-bottom:4px;}
+.fg input,.fg select{width:100%;padding:9px 13px;border:1.5px solid var(--br);border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--tx);transition:border-color .2s;}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--p);}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:11px;margin-bottom:13px;}
+.tbl{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--p);color:#fff;padding:10px 13px;text-align:right;font-weight:600;}
+td{padding:9px 13px;border-bottom:1px solid var(--br);}
+tr:hover td{background:#f8fafc;}
+.bdg{padding:3px 9px;border-radius:18px;font-size:11px;font-weight:700;display:inline-block;}
+.bs{background:#d4f5e3;color:#1a7a45;} .bd{background:#fde8e8;color:#c0392b;}
+.bw{background:#fef3cd;color:#856404;} .bi{background:#d0e8ff;color:#0d5c9e;}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:13px;margin-bottom:18px;}
+.kc{background:#fff;border-radius:11px;padding:16px;border:1px solid var(--br);border-right:4px solid var(--a);}
+.kl{font-size:11px;color:var(--mu);margin-bottom:4px;} .kv{font-size:26px;font-weight:900;color:var(--p);} .ks{font-size:11px;color:var(--mu);margin-top:2px;}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--p);color:#fff;padding:12px 24px;border-radius:11px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:transform .3s ease;z-index:9999;min-width:250px;text-align:center;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#toast.ok{background:var(--g);} #toast.err{background:var(--r);}
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--br);padding:0 18px;gap:3px;overflow-x:auto;}
+.tab{padding:12px 18px;cursor:pointer;font-size:13px;font-weight:600;color:var(--mu);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Cairo',sans-serif;}
+.tab.active{color:var(--p);border-bottom-color:var(--a);} .tab:hover{color:var(--p);}
+.ap{display:none;} .ap.active{display:block;}
+.lcard{border:1.5px solid var(--br);border-radius:11px;padding:14px;display:flex;align-items:center;gap:13px;margin-bottom:10px;background:#fafbfc;}
+.lav{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#fff;flex-shrink:0;}
+.li{flex:1;} .ln{font-weight:700;font-size:13px;} .lj{font-size:12px;color:var(--mu);}
+.lu{font-size:11px;color:var(--p);word-break:break-all;background:#eef3f9;padding:3px 7px;border-radius:5px;margin-top:3px;}
+.la{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.ehero{text-align:center;padding:28px 18px 18px;}
+.eavtr{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#fff;margin:0 auto 10px;}
+.ehero h2{font-size:18px;font-weight:700;} .ehero p{font-size:13px;color:var(--mu);}
+.locb{background:#f8fafc;border:1px solid var(--br);border-radius:9px;padding:13px;margin:12px 0;display:flex;align-items:center;gap:11px;}
+.locb .ico{font-size:24px;} .locb .lbl{font-size:11px;color:var(--mu);} .locb .val{font-size:13px;font-weight:600;}
+.rstrip{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:9px;margin-bottom:7px;}
+.rstrip.ins{background:#eafaf1;border:1px solid #a9dfbf;}
+.rstrip.outs{background:#fef9e7;border:1px solid #f9e4b7;}
+.rstrip .rt{font-size:17px;font-weight:900;color:var(--p);}
+.rstrip .rl{font-size:12px;color:var(--mu);}
+.rstrip .rlo{font-size:11px;color:var(--mu);margin-top:1px;}
+.mph{background:linear-gradient(135deg,#1a3c5e18,#c8a84b18);border:2px dashed var(--a);border-radius:9px;padding:20px;text-align:center;color:var(--mu);margin:10px 0;font-size:13px;}
+@media(max-width:580px){header{flex-direction:column;gap:7px;text-align:center;} .lcard{flex-direction:column;align-items:flex-start;} .la{flex-direction:row;}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .35s ease;}
+#modeCreate input,#modeLogin input{padding-left:36px !important;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-ic">O</div>
+    <div><h1>Optima — نظام الحضور والانصراف</h1><p>رابط خاص + كلمة سر لكل موظف 🔐</p></div>
+  </div>
+  <div style="text-align:left"><div id="clk">--:--:--</div><div id="dt"></div></div>
+</header>
+
+<!-- SCREEN: Admin Login -->
+<div class="screen active" id="s-login">
+  <div class="wrap" style="max-width:400px;margin-top:60px;">
+    <div class="card" style="text-align:center;padding:34px;">
+      <div style="font-size:46px;margin-bottom:10px;">🔐</div>
+      <h2 style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:6px;">لوحة تحكم المدير</h2>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:22px;">أدخل كلمة المرور للوصول</p>
+      <div class="fg" style="margin-bottom:14px;"><input type="password" id="apw" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')aLogin()"></div>
+      <button class="btn bp bfl" onclick="aLogin()">🔓 دخول كمدير</button>
+      <div style="margin:18px 0;color:var(--mu);font-size:12px;">— أو —</div>
+      <p style="font-size:12px;color:var(--mu);">هل أنت موظف؟ استخدم الرابط الخاص بك الذي أرسله لك مديرك</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: Password (3 modes) -->
+<div class="screen" id="s-verify">
+  <div class="wrap" style="max-width:400px;margin-top:50px;">
+    <div class="card" style="padding:30px 26px;">
+
+      <!-- header: avatar + name -->
+      <div style="text-align:center;margin-bottom:22px;">
+        <div id="vAvatar" style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;margin:0 auto 10px;"></div>
+        <h2 id="vName" style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:4px;">---</h2>
+        <p id="vSub" style="font-size:12px;color:var(--mu);"></p>
+      </div>
+
+      <!-- MODE A: أدخل الكلمة المبدئية (أول دخول) -->
+      <div id="modeInit">
+        <div style="background:#eaf4ff;border:1px solid #b3d4f5;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a3c5e;margin-bottom:16px;">
+          🔑 أدخل كلمة السر المبدئية التي أرسلها لك مديرك
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label>كلمة السر المبدئية</label>
+          <div style="position:relative;">
+            <input type="password" id="pwInit" placeholder="الكلمة المبدئية" onkeydown="if(event.key==='Enter')loginInit()">
+            <span onclick="togglePw('pwInit')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;color:var(--mu);">👁</span>
+          </div>
+        </div>
+        <div id="initErr" style="color:var(--r);font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+        <button class="btn bg bfl" onclick="loginInit()">➡️ متابعة</button>
+      </div>
+
+      <!-- MODE B: إنشاء كلمة السر الشخصية (إجباري بعد الكلمة المبدئية) -->
+      <div id="modeCreate" style="display:none;">
+        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;font-size:12px;color:#856404;margin-bottom:16px;">
+          ⚠️ يجب إنشاء كلمة سر خاصة بك قبل المتابعة — لن تتمكن من تخطي هذه الخطوة
+        </div>
+        <div class="fg" style="margin-bottom:11px;">
+          <label>كلمة السر الجديدة</label>
+          <div style="position:relative;">
+            <input type="password" id="pw1" placeholder="6 أحرف على الأقل" oninput="pwStr()" onkeydown="if(event.key==='Enter')document.getElementById('pw2').focus()">
+            <span onclick="togglePw('pw1')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;color:var(--mu);">👁</span>
+          </div>
+        </div>
+        <!-- strength -->
+        <div style="margin-bottom:11px;">
+          <div style="height:5px;background:var(--br);border-radius:3px;overflow:hidden;"><div id="strBar" style="height:100%;width:0%;transition:all .3s;border-radius:3px;"></div></div>
+          <div id="strTxt" style="font-size:11px;color:var(--mu);margin-top:3px;"></div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label>تأكيد كلمة السر</label>
+          <div style="position:relative;">
+            <input type="password" id="pw2" placeholder="أعد الكتابة" onkeydown="if(event.key==='Enter')createPw()">
+            <span onclick="togglePw('pw2')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;color:var(--mu);">👁</span>
+          </div>
+        </div>
+        <div id="createErr" style="color:var(--r);font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+        <button class="btn bp bfl" onclick="createPw()">🔐 حفظ كلمة السر والدخول</button>
+      </div>
+
+      <!-- MODE C: تسجيل دخول عادي (من المرة الثانية) -->
+      <div id="modeLogin" style="display:none;">
+        <div class="fg" style="margin-bottom:14px;">
+          <label>كلمة السر</label>
+          <div style="position:relative;">
+            <input type="password" id="pwLogin" placeholder="أدخل كلمة سرك" onkeydown="if(event.key==='Enter')loginPw()">
+            <span onclick="togglePw('pwLogin')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;color:var(--mu);">👁</span>
+          </div>
+        </div>
+        <div id="loginErr" style="color:var(--r);font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+        <button class="btn bp bfl" onclick="loginPw()">🔓 دخول</button>
+        <div id="lockMsg" style="margin-top:10px;font-size:12px;color:var(--r);display:none;"></div>
+        <button onclick="forgotPw()" style="margin-top:14px;width:100%;padding:9px;background:none;border:1px solid var(--br);border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--mu);cursor:pointer;">🔄 نسيت كلمة السر؟ تواصل مع المدير</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: Admin Panel -->
+<div class="screen" id="s-admin">
+  <div class="tabs">
+    <button class="tab active" onclick="aTab('links',this)">🔗 روابط الموظفين</button>
+    <button class="tab" onclick="aTab('urls',this)">🌐 إعداد الروابط</button>
+    <button class="tab" onclick="aTab('all',this)">📋 كل السجلات</button>
+    <button class="tab" onclick="aTab('pen',this)">⚠️ الجزاءات</button>
+    <button class="tab" onclick="aTab('leave',this)">🏖️ الإجازات</button>
+    <button class="tab" onclick="aTab('pay',this)">💰 المرتبات</button>
+    <button class="tab" onclick="aTab('emps',this)">👥 الموظفون</button>
+    <button class="tab" onclick="aTab('rep',this)">📊 تقارير</button>
+    <button class="tab" style="margin-right:auto;color:var(--r);" onclick="aLogout()">🚪 خروج</button>
+  </div>
+
+  <!-- url generator -->
+  <div class="wrap ap" id="ap-urls">
+    <div class="card">
+      <div class="ct">🌐 إعداد عنوان الموقع</div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:16px;">بعد رفع الملف على Netlify أو أي استضافة، أدخل العنوان هنا وستظهر روابط كل الموظفين جاهزة للإرسال.</p>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px;">
+        <div class="fg" style="flex:1;min-width:260px;">
+          <label>عنوان موقعك بعد الرفع</label>
+          <input type="url" id="siteBase" placeholder="https://my-optima.netlify.app" oninput="buildURLs()" style="direction:ltr;text-align:left;">
+        </div>
+        <button class="btn bp" onclick="buildURLs()">🔄 توليد الروابط</button>
+      </div>
+      <p style="font-size:11px;color:var(--mu);">مثال: https://optima-attend.netlify.app — لا تضع / في النهاية</p>
+    </div>
+    <div id="urlCards"></div>
+    <div class="card" style="background:linear-gradient(135deg,#eef3f9,#fff);">
+      <div class="ct">🚀 كيفية رفع الملف مجاناً — Netlify Drop</div>
+      <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
+        <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
+        <div>افتح: <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--a);font-weight:700;">app.netlify.com/drop</a></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
+        <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+        <div>اسحب الملف <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">attendance_v5.html</code> وأفلته في المنطقة الزرقاء</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
+        <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
+        <div>ستحصل على رابط مثل: <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;direction:ltr;display:inline-block;">https://amazing-xyz-123.netlify.app</code></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="min-width:28px;height:28px;border-radius:50%;background:var(--a);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:700;">4</div>
+        <div>الصق الرابط في الخانة أعلاه ← ستظهر روابط الموظفين كاملة جاهزة للإرسال عبر واتساب 🎉</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- links -->
+  <div class="wrap ap active" id="ap-links">
+    <div class="card">
+      <div class="ct">🔗 الروابط الخاصة بكل موظف</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:16px;">كل رابط يفتح صفحة خاصة بالموظف فقط — لا يرى فيها أي بيانات لزملائه. أرسل الرابط عبر واتساب.</p>
+      <div id="linksList"></div>
+    </div>
+  </div>
+
+  <!-- all records -->
+  <div class="wrap ap" id="ap-all">
+    <div class="kpi" id="aKPI"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px;">
+        <div class="ct" style="margin:0">📋 جميع سجلات الحضور</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <select id="afEmp" onchange="renderAll()" style="padding:7px 11px;border:1px solid var(--br);border-radius:7px;font-family:'Cairo',sans-serif;font-size:12px;"></select>
+          <input type="date" id="afDate" onchange="renderAll()" style="padding:7px 11px;border:1px solid var(--br);border-radius:7px;font-family:'Cairo',sans-serif;">
+          <button class="btn bsm ba" onclick="exAll()">⬇️ CSV</button>
+        </div>
+      </div>
+      <div class="tbl"><table><thead><tr><th>#</th><th>الموظف</th><th>التاريخ</th><th>حضور</th><th>انصراف</th><th>ساعات</th><th>الموقع</th><th>الحالة</th></tr></thead><tbody id="allB"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- penalties -->
+  <div class="wrap ap" id="ap-pen">
+    <!-- Reference table from policy -->
+    <div class="card">
+      <div class="ct">📋 لائحة جزاءات التأخير — Optima (الباب الثالث)</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;">فترة السماح: حتى الساعة 09:15 صباحاً (15 دقيقة). أي تأخير بعدها يُطبق عليه الجدول التالي:</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>مدة التأخير بعد فترة السماح</th><th>المرة الأولى</th><th>المرة الثانية</th><th>المرة الثالثة</th></tr></thead>
+          <tbody>
+            <tr><td>من 16 إلى 30 دقيقة</td><td><span class="bdg bw">إنذار كتابي</span></td><td><span class="bdg bw">خصم ربع يوم</span></td><td><span class="bdg bd">خصم نصف يوم</span></td></tr>
+            <tr><td>من 31 إلى 60 دقيقة</td><td><span class="bdg bw">خصم ربع يوم</span></td><td><span class="bdg bd">خصم نصف يوم</span></td><td><span class="bdg bd">خصم يوم كامل</span></td></tr>
+            <tr><td>أكثر من 60 دقيقة</td><td><span class="bdg bd">خصم نصف يوم</span></td><td><span class="bdg bd">خصم يوم كامل</span></td><td><span class="bdg bd" style="background:#7b0000;color:#fff">خصم يومين</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Early leave policy -->
+    <div class="card">
+      <div class="ct">🚪 سياسة الانصراف المبكر (دون إذن)</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;">الانصراف قبل 05:00 مساءً بدون إذن كتابي/إلكتروني معتمد يُعامل معاملة التأخير وقد يُشدَّد:</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>المرة</th><th>الجزاء</th></tr></thead>
+          <tbody>
+            <tr><td>الأولى</td><td><span class="bdg bw">إنذار كتابي + خصم أجر ساعات الغياب الفعلي</span></td></tr>
+            <tr><td>الثانية</td><td><span class="bdg bd">خصم أجر نصف يوم</span></td></tr>
+            <tr><td>الثالثة</td><td><span class="bdg bd">خصم أجر يوم كامل</span></td></tr>
+            <tr><td>الرابعة</td><td><span class="bdg bd" style="background:#7b0000;color:#fff">خصم يومين + تحقيق مع الموظف</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Calculated penalties per employee -->
+    <div class="card">
+      <div class="ct">⚠️ جزاءات التأخير المحتسبة لكل موظف (الشهر الحالي)</div>
+      <div class="kpi" id="penKPI"></div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>الموظف</th><th>عدد مرات التأخير</th><th>تأخير 16-30 د</th><th>تأخير 31-60 د</th><th>تأخير +60 د</th><th>الانصراف المبكر</th><th>الخصم المحتسب</th><th>الجزاء المقترح</th></tr></thead>
+          <tbody id="penB"></tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--mu);margin-top:10px;">* الخصم يُحتسب تلقائياً حسب لائحة Optima ويُطبق على كشف المرتبات</p>
+    </div>
+    <!-- Absence without excuse -->
+    <div class="card">
+      <div class="ct">📵 سجل الغياب بدون عذر</div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>الموظف</th><th>التاريخ</th><th>النوع</th><th>الخصم</th></tr></thead>
+          <tbody id="absB"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- leave -->
+  <div class="wrap ap" id="ap-leave">
+    <div class="kpi" id="leaveKPI"></div>
+    <div class="card">
+      <div class="ct">🏖️ رصيد الإجازات — سنة 2025</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;">الرصيد المتاح = رصيد البداية − الإجازات المأخوذة. يمكن للمدير تعديل الرصيد المستخدم يدوياً.</p>
+      <div class="tbl">
+        <table>
+          <thead>
+            <tr>
+              <th>الموظف</th><th>المسمى الوظيفي</th>
+              <th>رصيد البداية</th><th>مستخدم</th><th>المتبقي</th>
+              <th>شريط الاستهلاك</th><th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="leaveB"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- سجل طلبات الإجازة -->
+    <div class="card">
+      <div class="ct">📝 تسجيل إجازة يدوياً</div>
+      <div class="fgrid">
+        <div class="fg"><label>الموظف</label>
+          <select id="lvEmp" style="width:100%;padding:9px 13px;border:1.5px solid var(--br);border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;"></select>
+        </div>
+        <div class="fg"><label>عدد أيام الإجازة</label>
+          <input type="number" id="lvDays" placeholder="عدد الأيام" min="0.5" step="0.5">
+        </div>
+        <div class="fg"><label>تاريخ البداية</label>
+          <input type="date" id="lvFrom">
+        </div>
+        <div class="fg"><label>نوع الإجازة</label>
+          <select id="lvType" style="width:100%;padding:9px 13px;border:1.5px solid var(--br);border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;">
+            <option value="سنوية">سنوية</option>
+            <option value="عارضة">عارضة</option>
+            <option value="مرضية">مرضية</option>
+            <option value="بدون راتب">بدون راتب</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn bp" onclick="addLeave()">➕ تسجيل الإجازة وخصمها من الرصيد</button>
+    </div>
+    <!-- سجل الإجازات -->
+    <div class="card">
+      <div class="ct">📋 سجل الإجازات</div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>الموظف</th><th>النوع</th><th>من</th><th>الأيام</th><th>ملاحظة</th><th>إجراء</th></tr></thead>
+          <tbody id="leaveLogB"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- payroll -->
+  <div class="wrap ap" id="ap-pay">
+    <div class="kpi" id="payKPI"></div>
+    <div class="card">
+      <div class="ct">💰 كشف المرتبات</div>
+      <div class="tbl"><table><thead><tr><th>الموظف</th><th>أيام الحضور</th><th>الراتب الأساسي</th><th>بدل حضور</th><th>خصم غياب</th><th>مكافأة</th><th>الإجمالي</th></tr></thead><tbody id="payB"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- employees -->
+  <div class="wrap ap" id="ap-emps">
+    <div class="card">
+      <div class="ct">➕ إضافة موظف جديد</div>
+      <div class="fgrid">
+        <div class="fg"><label>الاسم الكامل</label><input id="nN" placeholder="محمد أحمد"></div>
+        <div class="fg"><label>المسمى الوظيفي</label><input id="nJ" placeholder="مدير إداري / مهندس أول..."></div>
+        <div class="fg"><label>الراتب الأساسي (EGP)</label><input type="number" id="nS" placeholder="6000"></div>
+        <div class="fg"><label>رقم الهاتف</label><input id="nP" placeholder="+201..."></div>
+        <div class="fg"><label>كلمة السر المبدئية 🔑</label><input id="nIP" placeholder="مثال: Optima@123" autocomplete="off"></div>
+        <div class="fg"><label>رصيد الإجازات السنوي (أيام)</label><input type="number" id="nLT" placeholder="21 أو 30"></div>
+      </div>
+      <button class="btn bp" onclick="addEmp()">➕ إضافة الموظف وإنشاء رابطه</button>
+    </div>
+    <div class="card">
+      <div class="ct">👥 قائمة الموظفين</div>
+      <div class="tbl"><table><thead><tr><th>#</th><th>الاسم</th><th>الوظيفة</th><th>الراتب</th><th>الهاتف</th><th>الكلمة المبدئية</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="empTB"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- reports -->
+  <div class="wrap ap" id="ap-rep">
+    <div class="card">
+      <div class="ct">📊 تقرير الالتزام الشهري</div>
+      <div class="tbl"><table><thead><tr><th>الموظف</th><th>أيام الحضور</th><th>أيام الغياب</th><th>إجمالي الساعات</th><th>نسبة الالتزام</th></tr></thead><tbody id="repB"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: Employee — minimal, private -->
+<div class="screen" id="s-emp">
+  <div class="wrap" style="max-width:420px;">
+
+    <!-- اسم الموظف + المسمى الوظيفي -->
+    <div class="card" style="text-align:center;padding:28px 20px 20px;">
+      <div class="eavtr" id="eAv" style="width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;margin:0 auto 12px;">م</div>
+      <h2 id="eName" style="font-size:20px;font-weight:700;color:var(--p);">---</h2>
+      <p id="eTitle" style="font-size:13px;font-weight:600;color:var(--a);margin-top:3px;"></p>
+      <p style="font-size:12px;color:var(--mu);margin-top:4px;">مرحباً بك في نظام الحضور — Optima</p>
+    </div>
+
+    <!-- تحديد الموقع -->
+    <div class="card">
+      <div class="ct">📍 موقعك الحالي</div>
+      <div class="locb">
+        <div class="ico">📡</div>
+        <div style="flex:1"><div class="lbl">الموقع الجغرافي</div><div class="val" id="eLoc">اضغط "تحديد" للحصول على موقعك</div></div>
+        <button class="btn bsm bp" onclick="getLoc()">📡 تحديد</button>
+      </div>
+      <div class="mph" id="eMap"><div style="font-size:30px;margin-bottom:6px;">🗺️</div>اضغط تحديد لعرض موقعك</div>
+    </div>
+
+    <!-- تسجيل حضور / انصراف -->
+    <div class="card">
+      <div class="ct">⏱️ تسجيل الحضور أو الانصراف</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+        <button class="btn bg bfl" onclick="eRec('checkin')">☀️ حضور</button>
+        <button class="btn br2 bfl" onclick="eRec('checkout')">🌙 انصراف</button>
+      </div>
+      <!-- تأكيد اليوم -->
+      <div id="todayS" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- ساعات التأخير فقط — لا يرى بيانات أحد غيره -->
+    <div class="card" id="lateCard">
+      <div class="ct">⏰ ساعات تأخيرك هذا الشهر</div>
+      <div id="lateDisplay" style="text-align:center;padding:10px 0;"></div>
+    </div>
+
+    <!-- رصيد الإجازات -->
+    <div class="card">
+      <div class="ct">🏖️ رصيد إجازاتك</div>
+      <div id="leaveEmpDisplay" style="text-align:center;padding:8px 0;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCREEN: 404 -->
+<div class="screen" id="s-404">
+  <div class="wrap" style="max-width:380px;margin-top:80px;text-align:center;">
+    <div style="font-size:60px;">🚫</div>
+    <h2 style="margin:14px 0 7px;color:var(--p)">رابط غير صالح</h2>
+    <p style="color:var(--mu);font-size:13px;">هذا الرابط غير صحيح أو منتهي.<br>تواصل مع مديرك للحصول على رابطك الخاص.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+// ── CONFIG ──
+const ADMIN_PASS = 'optima2025'; // غيّر كلمة المرور هنا
+
+// ── DATA ──
+function le(){return JSON.parse(localStorage.getItem('op_e')||'null')||[
+  {id:'mhsn', name:'محمد حسن',         title:'مدير إداري',                    job:'مدير إداري',          salary:20000, phone:'201000000001', color:'#1a3c5e', token:btoa('mhsn_opt25'),  initPw:'Optima@1', leaveTotal:30, leaveUsed:5},
+  {id:'mkhd', name:'محمد الخضراوي',    title:'مهندس أول موقع',               job:'مهندس أول موقع',       salary:30000, phone:'201000000002', color:'#c8a84b', token:btoa('mkhd_opt25'),  initPw:'Optima@2', leaveTotal:21, leaveUsed:3},
+  {id:'slah', name:'صلاح فتحي',        title:'مهندس أول إنشاءات طرق',        job:'مهندس أول إنشاءات طرق', salary:45000, phone:'201000000003', color:'#27ae60', token:btoa('slah_opt25'),  initPw:'Optima@3', leaveTotal:15, leaveUsed:2},
+  {id:'abdt', name:'عبد الحميد طه',    title:'مدير حسابات',                  job:'مدير حسابات',           salary:40000, phone:'201000000004', color:'#9b59b6', token:btoa('abdt_opt25'),  initPw:'Optima@4', leaveTotal:21, leaveUsed:0},
+];}
+function se(d){localStorage.setItem('op_e',JSON.stringify(d));}
+function lr(){return JSON.parse(localStorage.getItem('op_r')||'[]');}
+function sr(d){localStorage.setItem('op_r',JSON.stringify(d));}
+
+let emps=le(), recs=lr(), curEmp=null, eLat=null,eLng=null,eAddr='';
+
+// ── CLOCK ──
+function tick(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleTimeString('ar-EG');document.getElementById('dt').textContent=n.toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+setInterval(tick,1000);tick();
+
+// ── ROUTING ──
+let pendingEmp=null, failCount=0, lockedUntil=0, lockTimer=null;
+
+// storage: { empId: { pw: hashedPersonalPw, changed: bool } }
+function lpw(){return JSON.parse(localStorage.getItem('op_pw2')||'{}');}
+function spw(d){localStorage.setItem('op_pw2',JSON.stringify(d));}
+
+function hashPw(pw){
+  let h=0;for(let i=0;i<pw.length;i++)h=Math.imul(31,h)+pw.charCodeAt(i)|0;
+  return h.toString(36)+'_'+pw.length;
+}
+
+function route(){
+  const t=new URLSearchParams(location.search).get('t');
+  if(t){const e=emps.find(x=>x.token===t);if(e){pendingEmp=e;showVerify();return;}show('s-404');return;}
+  show('s-login');
+}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// ── عرض شاشة التحقق حسب حالة الموظف ──
+function showVerify(){
+  show('s-verify');
+  failCount=0;lockedUntil=0;
+  if(lockTimer){clearInterval(lockTimer);lockTimer=null;}
+  // fill header
+  document.getElementById('vAvatar').textContent=pendingEmp.name.charAt(0);
+  document.getElementById('vAvatar').style.background=pendingEmp.color;
+  document.getElementById('vName').textContent=pendingEmp.name;
+  // hide all modes
+  ['modeInit','modeCreate','modeLogin'].forEach(m=>document.getElementById(m).style.display='none');
+  const pws=lpw();
+  const rec=pws[pendingEmp.id];
+  if(!rec || !rec.changed){
+    // لم يغيّر بعد → وضع A: أدخل الكلمة المبدئية
+    document.getElementById('vSub').textContent='أدخل كلمة السر المبدئية للمتابعة';
+    document.getElementById('modeInit').style.display='block';
+    document.getElementById('pwInit').value='';
+    document.getElementById('initErr').textContent='';
+    setTimeout(()=>document.getElementById('pwInit').focus(),300);
+  } else {
+    // غيّر كلمة السر من قبل → وضع C: دخول عادي
+    document.getElementById('vSub').textContent='مرحباً، أدخل كلمة سرك للدخول';
+    document.getElementById('modeLogin').style.display='block';
+    document.getElementById('pwLogin').value='';
+    document.getElementById('loginErr').textContent='';
+    document.getElementById('lockMsg').style.display='none';
+    setTimeout(()=>document.getElementById('pwLogin').focus(),300);
+  }
+}
+
+// ── MODE A: تحقق من الكلمة المبدئية ──
+function loginInit(){
+  if(Date.now()<lockedUntil)return;
+  const val=document.getElementById('pwInit').value;
+  const err=document.getElementById('initErr');
+  if(!val){err.textContent='⚠️ أدخل كلمة السر المبدئية';return;}
+  if(val===pendingEmp.initPw){
+    // صحيحة → انتقل لوضع B: إنشاء كلمة سر خاصة
+    failCount=0;
+    document.getElementById('modeInit').style.display='none';
+    document.getElementById('modeCreate').style.display='block';
+    document.getElementById('vSub').textContent='أنشئ الآن كلمة سرك الخاصة';
+    document.getElementById('pw1').value='';
+    document.getElementById('pw2').value='';
+    document.getElementById('createErr').textContent='';
+    document.getElementById('strBar').style.width='0%';
+    document.getElementById('strTxt').textContent='';
+    setTimeout(()=>document.getElementById('pw1').focus(),200);
+  } else {
+    failCount++;
+    document.getElementById('pwInit').value='';
+    document.getElementById('pwInit').classList.add('shake');
+    setTimeout(()=>document.getElementById('pwInit').classList.remove('shake'),400);
+    if(failCount>=3){lockUser();}
+    else{err.textContent=`❌ كلمة السر غير صحيحة — تبقى ${3-failCount} محاولة`;}
+  }
+}
+
+// ── MODE B: إنشاء كلمة السر الشخصية (إجباري) ──
+function pwStr(){
+  const pw=document.getElementById('pw1').value;
+  let s=0;
+  if(pw.length>=6)s++;if(pw.length>=8)s++;
+  if(/[A-Z]/.test(pw)||/[a-z]/.test(pw))s++;
+  if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  const w=[0,20,40,65,85,100][s];
+  const cols=['#ccc','#e74c3c','#f39c12','#f39c12','#27ae60','#1a7a45'];
+  const lbls=['','ضعيفة جداً','ضعيفة','مقبولة','جيدة','قوية جداً ✅'];
+  document.getElementById('strBar').style.cssText=`height:100%;width:${w}%;transition:all .3s;border-radius:3px;background:${cols[s]}`;
+  document.getElementById('strTxt').textContent=pw?lbls[s]:'';
+}
+function togglePw(id){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';}
+function createPw(){
+  const pw1=document.getElementById('pw1').value;
+  const pw2=document.getElementById('pw2').value;
+  const err=document.getElementById('createErr');
+  if(pw1.length<6){err.textContent='❌ كلمة السر يجب أن تكون 6 أحرف على الأقل';return;}
+  if(pw1===pendingEmp.initPw){err.textContent='❌ لا يمكن استخدام الكلمة المبدئية — اختر كلمة جديدة';return;}
+  if(pw1!==pw2){
+    err.textContent='❌ كلمة السر غير متطابقة';
+    document.getElementById('pw2').classList.add('shake');
+    setTimeout(()=>document.getElementById('pw2').classList.remove('shake'),400);
+    return;
+  }
+  const pws=lpw();
+  pws[pendingEmp.id]={pw:hashPw(pw1),changed:true};
+  spw(pws);
+  showToast('✅ تم إنشاء كلمة السر — أهلاً '+pendingEmp.name,'ok');
+  setTimeout(()=>showEmp(pendingEmp),700);
+}
+
+// ── MODE C: تسجيل دخول عادي ──
+function loginPw(){
+  if(Date.now()<lockedUntil)return;
+  const pw=document.getElementById('pwLogin').value;
+  const err=document.getElementById('loginErr');
+  if(!pw){err.textContent='⚠️ أدخل كلمة السر';return;}
+  const pws=lpw();
+  const rec=pws[pendingEmp.id];
+  if(rec && rec.pw===hashPw(pw)){
+    failCount=0;err.textContent='';
+    showToast('✅ أهلاً '+pendingEmp.name,'ok');
+    setTimeout(()=>showEmp(pendingEmp),600);
+  } else {
+    failCount++;
+    document.getElementById('pwLogin').value='';
+    document.getElementById('pwLogin').classList.add('shake');
+    setTimeout(()=>document.getElementById('pwLogin').classList.remove('shake'),400);
+    if(failCount>=3){lockUser();}
+    else{err.textContent=`❌ كلمة السر غير صحيحة — تبقى ${3-failCount} محاولة`;}
+  }
+}
+
+// ── قفل الحساب ──
+function lockUser(){
+  lockedUntil=Date.now()+60000;
+  ['initErr','loginErr'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
+  const lm=document.getElementById('lockMsg');if(lm)lm.style.display='block';
+  lockTimer=setInterval(()=>{
+    const rem=Math.ceil((lockedUntil-Date.now())/1000);
+    const lm=document.getElementById('lockMsg');
+    if(rem<=0){
+      clearInterval(lockTimer);lockTimer=null;failCount=0;lockedUntil=0;
+      if(lm){lm.style.display='none';lm.textContent='';}
+    } else {
+      if(lm) lm.textContent=`🔒 تم تعليق الدخول — ${rem} ثانية متبقية`;
+    }
+  },1000);
+}
+
+function forgotPw(){showToast('تواصل مع المدير لإعادة تعيين كلمة السر','ok');}
+
+// ── إعادة تعيين كلمة السر من لوحة المدير ──
+function resetEmpPw(id,name){
+  const pws=lpw();delete pws[id];spw(pws);
+  showToast('✅ تم إعادة تعيين كلمة سر '+name+' — سيُدخل الكلمة المبدئية من جديد','ok');
+  rLinks();rEmpT();
+}
+
+// ── تعيين كلمة سر مبدئية جديدة من المدير ──
+function setInitPw(id,name){
+  const pw=prompt('كلمة السر المبدئية الجديدة لـ '+name+':');
+  if(!pw||pw.length<4){showToast('❌ كلمة السر قصيرة جداً','err');return;}
+  const idx=emps.findIndex(e=>e.id===id);
+  if(idx>=0){emps[idx].initPw=pw;se(emps);}
+  // reset personal password too
+  const pws=lpw();delete pws[id];spw(pws);
+  showToast('✅ تم تعيين الكلمة المبدئية وإعادة التعيين لـ '+name,'ok');
+  rLinks();rEmpT();
+}
+
+// ── ADMIN ──
+function aLogin(){
+  if(document.getElementById('apw').value===ADMIN_PASS){
+    show('s-admin');rLinks();rKPI();renderAll();rPen();rLeave();rPay();rEmpT();rRep();
+  }else{showToast('❌ كلمة المرور غير صحيحة','err');document.getElementById('apw').value='';}
+}
+function aLogout(){show('s-login');document.getElementById('apw').value='';}
+function aTab(n,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('ap-'+n).classList.add('active');
+  if(n==='urls'){buildURLs();}if(n==='all'){rKPI();renderAll();}if(n==='pen'){rPen();}if(n==='leave'){rLeave();}if(n==='pay'){rPay();}if(n==='emps'){rEmpT();}if(n==='rep'){rRep();}
+}
+
+// ── LINKS ──
+function eLink(tok){return location.origin+location.pathname+'?t='+encodeURIComponent(tok);}
+function rLinks(){
+  const d=document.getElementById('linksList');d.innerHTML='';
+  const pws=lpw();
+  emps.forEach(e=>{
+    const u=eLink(e.token);
+    const rec=pws[e.id];
+    const statusBadge=!rec?'<span class="bdg bw">⏳ لم يدخل بعد</span>'
+      :!rec.changed?'<span class="bdg bw">🔑 أدخل المبدئية — لم يغيّر بعد</span>'
+      :'<span class="bdg bs">✅ كلمة سر شخصية مُنشأة</span>';
+    d.innerHTML+=`<div class="lcard">
+      <div class="lav" style="background:${e.color}">${e.name.charAt(0)}</div>
+      <div class="li">
+        <div class="ln">${e.name} &nbsp;${statusBadge}</div>
+        <div class="lj">${e.job} • ${e.salary.toLocaleString()} EGP</div>
+        <div style="margin-top:6px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:5px 10px;font-size:12px;color:#856404;">
+          🔑 الكلمة المبدئية: <strong>${e.initPw}</strong>
+        </div>
+        <div class="lu" style="direction:ltr;text-align:left;margin-top:5px;">${u}</div>
+      </div>
+      <div class="la">
+        <button class="btn bsm bp" onclick="cpL('${u}')">📋 نسخ</button>
+        <button class="btn bsm ba" onclick="wL('${e.phone}','${e.name}','${u}','${e.initPw}')">💬 واتساب</button>
+        <button class="btn bsm br2" onclick="setInitPw('${e.id}','${e.name}')">🔄 تغيير المبدئية</button>
+      </div></div>`;
+  });
+}
+function cpL(u){
+  navigator.clipboard.writeText(u).then(()=>showToast('✅ تم نسخ الرابط','ok')).catch(()=>{
+    const t=document.createElement('textarea');t.value=u;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✅ تم نسخ الرابط','ok');
+  });
+}
+function wL(ph,nm,u,initPw){
+  const m=encodeURIComponent(
+    'مرحباً '+nm+'،\n\n'+
+    '📌 رابطك الخاص لتسجيل الحضور:\n'+u+'\n\n'+
+    '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
+    '⚠️ عند أول دخول:\n'+
+    '١. أدخل الكلمة المبدئية\n'+
+    '٢. ستُطلب منك إنشاء كلمة سر خاصة بك\n'+
+    '٣. من المرة الثانية ادخل بكلمتك أنت\n\n'+
+    'Optima — إدارة الموارد البشرية'
+  );
+  window.open('https://wa.me/'+ph+'?text='+m,'_blank');
+}
+
+// ── URL GENERATOR ──
+function buildURLs(){
+  const base=(document.getElementById('siteBase')?.value||'').trim().replace(/\/$/,'');
+  const container=document.getElementById('urlCards');
+  if(!container) return;
+
+  // إذا لم يُدخل عنوان بعد — أظهر placeholder
+  const fileName='attendance_v5.html';
+  const displayBase=base||'https://elaborate-otter-88350d.netlify.app';
+  const isReal=base.startsWith('http');
+
+  container.innerHTML='';
+  emps.forEach(e=>{
+    const url=`${displayBase}/${fileName}?t=${encodeURIComponent(e.token)}`;
+    const pws=lpw();
+    const rec=pws[e.id];
+    const pwStatus=!rec?'⏳ لم يدخل بعد':!rec.changed?'🔑 أدخل المبدئية فقط':'✅ كلمة سر شخصية';
+
+    container.innerHTML+=`
+    <div class="card" style="margin-bottom:14px;border-right:4px solid ${e.color};">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <div style="width:46px;height:46px;border-radius:50%;background:${e.color};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0;">${e.name.charAt(0)}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:15px;color:var(--p);">${e.name}</div>
+          <div style="font-size:12px;color:var(--mu);">${e.title||e.job} &nbsp;|&nbsp; ${pwStatus}</div>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:11px;color:var(--mu);">كلمة السر المبدئية</div>
+          <code style="background:#fff3cd;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700;">${e.initPw}</code>
+        </div>
+      </div>
+
+      <!-- الرابط -->
+      <div style="background:#f0f4f8;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;font-size:11px;color:${isReal?'var(--p)':'var(--mu)'};direction:ltr;text-align:left;word-break:break-all;font-family:monospace;">${url}</div>
+      </div>
+
+      ${!isReal?'<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:7px;padding:8px 12px;font-size:12px;color:#856404;margin-bottom:10px;">⚠️ أدخل عنوان موقعك الحقيقي أعلاه لتفعيل الروابط</div>':''}
+
+      <!-- أزرار -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn bsm bp" onclick="cpURL('url_${e.id}')">📋 نسخ الرابط</button>
+        <button class="btn bsm ba" onclick="sendWhatsApp('${e.phone}','${e.name}','${e.title||e.job}','${e.initPw}','url_${e.id}')">💬 إرسال واتساب</button>
+        <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="copyFullMsg('${e.name}','${e.title||e.job}','${e.initPw}','url_${e.id}')">📄 نسخ الرسالة كاملة</button>
+      </div>
+      <!-- hidden span to hold URL -->
+      <span id="url_${e.id}" style="display:none;">${url}</span>
+    </div>`;
+  });
+}
+
+function cpURL(spanId){
+  const url=document.getElementById(spanId)?.textContent||'';
+  navigator.clipboard.writeText(url).then(()=>showToast('✅ تم نسخ الرابط','ok'))
+  .catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✅ تم نسخ الرابط','ok');});
+}
+
+function sendWhatsApp(phone,name,title,initPw,spanId){
+  const url=document.getElementById(spanId)?.textContent||'';
+  const msg=encodeURIComponent(
+    'مرحباً '+name+'،\n\n'+
+    '📌 رابطك الخاص لتسجيل الحضور والانصراف:\n'+url+'\n\n'+
+    '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
+    '⚠️ خطوات أول دخول:\n'+
+    '١. افتح الرابط\n'+
+    '٢. أدخل كلمة السر المبدئية\n'+
+    '٣. أنشئ كلمة سرك الخاصة\n'+
+    '٤. من المرة الثانية ادخل بكلمتك أنت\n\n'+
+    '🔒 الرابط خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
+    'Optima — إدارة الموارد البشرية'
+  );
+  window.open('https://wa.me/'+phone.replace(/\D/g,'')+'?text='+msg,'_blank');
+}
+
+function copyFullMsg(name,title,initPw,spanId){
+  const url=document.getElementById(spanId)?.textContent||'';
+  const msg=
+    'مرحباً '+name+'،\n\n'+
+    '📌 رابطك الخاص لتسجيل الحضور والانصراف:\n'+url+'\n\n'+
+    '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
+    '⚠️ خطوات أول دخول:\n'+
+    '١. افتح الرابط\n'+
+    '٢. أدخل كلمة السر المبدئية\n'+
+    '٣. أنشئ كلمة سرك الخاصة\n'+
+    '٤. من المرة الثانية ادخل بكلمتك أنت\n\n'+
+    '🔒 الرابط خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
+    'Optima — إدارة الموارد البشرية';
+  navigator.clipboard.writeText(msg).then(()=>showToast('✅ تم نسخ الرسالة كاملة','ok'))
+  .catch(()=>{const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✅ تم نسخ الرسالة كاملة','ok');});
+}
+function rKPI(){
+  const td=new Date().toLocaleDateString('en-CA');
+  const tp=[...new Set(recs.filter(r=>r.date===td&&r.type==='checkin').map(r=>r.empId))].length;
+  document.getElementById('aKPI').innerHTML=`
+    <div class="kc"><div class="kl">حاضرون اليوم</div><div class="kv">${tp}</div><div class="ks">من ${emps.length} موظف</div></div>
+    <div class="kc"><div class="kl">إجمالي السجلات</div><div class="kv">${recs.length}</div><div class="ks">منذ البداية</div></div>
+    <div class="kc"><div class="kl">سجلات GPS</div><div class="kv">${recs.filter(r=>r.lat).length}</div><div class="ks">تسجيل جغرافي</div></div>
+    <div class="kc"><div class="kl">الموظفون</div><div class="kv">${emps.length}</div><div class="ks">نشط</div></div>`;
+  const sel=document.getElementById('afEmp');
+  sel.innerHTML='<option value="">كل الموظفين</option>';
+  emps.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name;sel.appendChild(o);});
+}
+function renderAll(){
+  const fE=document.getElementById('afEmp')?.value;
+  const fD=document.getElementById('afDate')?.value;
+  let rows=Object.values(grp(recs));
+  if(fE) rows=rows.filter(r=>r.eId===fE);
+  if(fD) rows=rows.filter(r=>r.date===fD);
+  rows.sort((a,b)=>b.date.localeCompare(a.date));
+  const tb=document.getElementById('allB');tb.innerHTML='';
+  if(!rows.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:18px">لا توجد سجلات</td></tr>';return;}
+  rows.forEach((r,i)=>{
+    const {h,b}=ch(r);const loc=(r.ci?.address||r.co?.address||'--').substring(0,32);
+    tb.innerHTML+=`<tr><td>${i+1}</td><td><strong>${r.eN}</strong></td><td>${r.date}</td><td>${r.ci?.time||'--'}</td><td>${r.co?.time||'--'}</td><td>${h}</td><td style="font-size:11px">${loc}</td><td>${b}</td></tr>`;
+  });
+}
+function exAll(){
+  let csv='\uFEFFالموظف,التاريخ,حضور,انصراف,ساعات,الموقع\n';
+  Object.values(grp(recs)).forEach(r=>{const {h}=ch(r);csv+=`${r.eN},${r.date},${r.ci?.time||''},${r.co?.time||''},${h},${(r.ci?.address||'').replace(/,/g,' ')}\n`;});
+  dl(csv,'attendance_optima.csv');
+}
+
+// ── PENALTY ENGINE (لائحة جزاءات Optima) ──
+// ساعات العمل: 09:00 → 17:00 | فترة السماح: حتى 09:15
+const WORK_START = 9*60;      // 09:00 بالدقائق
+const GRACE_END  = 9*60+15;   // 09:15
+const WORK_END   = 17*60;     // 17:00
+
+function timeToMins(timeStr){
+  // "9:05:00 ص" أو "09:05:00 AM" — نحوّل لدقائق
+  if(!timeStr||timeStr==='--') return null;
+  const clean=timeStr.replace(/[صمAPM\s]/gi,'').trim();
+  const parts=clean.split(':');
+  let h=parseInt(parts[0]),m=parseInt(parts[1]||0);
+  // detect PM (م or PM) — add 12 if not noon
+  if((timeStr.includes('م')||timeStr.toLowerCase().includes('pm'))&&h<12) h+=12;
+  if((timeStr.includes('ص')||timeStr.toLowerCase().includes('am'))&&h===12) h=0;
+  return h*60+m;
+}
+
+function lateMinutes(timeStr){
+  const mins=timeToMins(timeStr);
+  if(mins===null) return 0;
+  return Math.max(0, mins - GRACE_END);
+}
+
+function earlyLeaveMinutes(timeStr){
+  const mins=timeToMins(timeStr);
+  if(mins===null) return 0;
+  return Math.max(0, WORK_END - mins);
+}
+
+// جدول الجزاءات حسب اللائحة — يُرجع كسر اليوم (0.25=ربع, 0.5=نصف, 1=يوم, 2=يومين, 'warning'=إنذار)
+function latePenaltyFraction(lateMin, occurrence){
+  // occurrence: 1=أولى, 2=ثانية, 3=ثالثة فأكثر
+  const o=Math.min(occurrence,3);
+  if(lateMin<=0) return 0;
+  if(lateMin<=30){ // 16-30 دقيقة
+    if(o===1) return 'warning';
+    if(o===2) return 0.25;
+    return 0.5;
+  }
+  if(lateMin<=60){ // 31-60 دقيقة
+    if(o===1) return 0.25;
+    if(o===2) return 0.5;
+    return 1;
+  }
+  // أكثر من 60 دقيقة
+  if(o===1) return 0.5;
+  if(o===2) return 1;
+  return 2;
+}
+
+function earlyLeavePenaltyFraction(earlyMin, occurrence){
+  const o=Math.min(occurrence,4);
+  if(earlyMin<=0) return 0;
+  if(o===1) return 'warning+hours'; // إنذار + خصم ساعات فعلية
+  if(o===2) return 0.5;
+  if(o===3) return 1;
+  return 2; // المرة الرابعة
+}
+
+// احتساب الجزاءات لموظف معيّن
+function calcPenalties(empId, salary){
+  const er=recs.filter(r=>r.eId===empId).sort((a,b)=>a.ts-b.ts);
+  const dailyRate=salary/26;
+  const hourlyRate=salary/(26*8);
+
+  let lateCount=0, earlyCount=0;
+  let totalDeduct=0;
+  let lateBreakdown={s:0,m:0,l:0}; // short(16-30), medium(31-60), long(>60)
+  let warnings=[];
+  let penaltyLog=[];
+
+  const grouped=grp(er);
+  Object.values(grouped).sort((a,b)=>a.date.localeCompare(b.date)).forEach(row=>{
+    // تأخير
+    if(row.ci){
+      const late=lateMinutes(row.ci.time);
+      if(late>0){
+        lateCount++;
+        if(late<=30) lateBreakdown.s++;
+        else if(late<=60) lateBreakdown.m++;
+        else lateBreakdown.l++;
+        const pen=latePenaltyFraction(late,lateCount);
+        if(pen==='warning'){
+          warnings.push({date:row.date,type:'تأخير',note:`إنذار كتابي — تأخير ${late} دقيقة`});
+        } else if(typeof pen==='number'&&pen>0){
+          const deduct=pen*dailyRate;
+          totalDeduct+=deduct;
+          penaltyLog.push({date:row.date,type:'تأخير '+late+'د',pen:pen,deduct});
+        }
+      }
+    }
+    // انصراف مبكر
+    if(row.co){
+      const early=earlyLeaveMinutes(row.co.time);
+      if(early>0){
+        earlyCount++;
+        const pen=earlyLeavePenaltyFraction(early,earlyCount);
+        if(pen==='warning+hours'){
+          const deduct=(early/60)*hourlyRate;
+          totalDeduct+=deduct;
+          warnings.push({date:row.date,type:'انصراف مبكر',note:`إنذار + خصم ${early} دقيقة (${deduct.toFixed(1)} EGP)`});
+          penaltyLog.push({date:row.date,type:'انصراف مبكر '+early+'د',pen:'ساعات',deduct});
+        } else if(typeof pen==='number'&&pen>0){
+          const deduct=pen*dailyRate;
+          totalDeduct+=deduct;
+          penaltyLog.push({date:row.date,type:'انصراف مبكر',pen:pen,deduct});
+        }
+      }
+    }
+  });
+  return {lateCount,earlyCount,lateBreakdown,totalDeduct,warnings,penaltyLog,dailyRate};
+}
+
+// ── PENALTIES PAGE ──
+function rPen(){
+  const tb=document.getElementById('penB');
+  const absT=document.getElementById('absB');
+  tb.innerHTML=''; absT.innerHTML='';
+  let totalPenAll=0, totalLateAll=0;
+
+  emps.forEach(e=>{
+    const p=calcPenalties(e.id,e.salary);
+    totalPenAll+=p.totalDeduct;
+    totalLateAll+=p.lateCount;
+    const jz=p.totalDeduct>0?`<strong style="color:var(--r)">-${p.totalDeduct.toFixed(0)} EGP</strong>`:'<span style="color:var(--g)">لا يوجد</span>';
+    const badge=p.lateCount>=3?'<span class="bdg bd">تحذير</span>':p.lateCount>=1?'<span class="bdg bw">متابعة</span>':'<span class="bdg bs">ملتزم</span>';
+    tb.innerHTML+=`<tr>
+      <td><strong>${e.name}</strong></td>
+      <td>${p.lateCount} مرة</td>
+      <td>${p.lateBreakdown.s}</td>
+      <td>${p.lateBreakdown.m}</td>
+      <td>${p.lateBreakdown.l}</td>
+      <td>${p.earlyCount} مرة</td>
+      <td>${jz}</td>
+      <td>${badge}</td></tr>`;
+    // absence log
+    p.warnings.forEach(w=>{
+      absT.innerHTML+=`<tr><td>${e.name}</td><td>${w.date}</td><td>${w.type}</td><td><span class="bdg bw">${w.note}</span></td></tr>`;
+    });
+  });
+  if(!absT.innerHTML) absT.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--mu);padding:14px">لا توجد إنذارات مسجلة</td></tr>';
+
+  document.getElementById('penKPI').innerHTML=`
+    <div class="kc"><div class="kl">إجمالي الخصومات</div><div class="kv" style="color:var(--r)">${totalPenAll.toFixed(0)}</div><div class="ks">EGP هذا الشهر</div></div>
+    <div class="kc"><div class="kl">إجمالي التأخيرات</div><div class="kv">${totalLateAll}</div><div class="ks">مرة تأخير مسجلة</div></div>
+    <div class="kc"><div class="kl">ساعة البداية</div><div class="kv">09:00</div><div class="ks">فترة السماح حتى 09:15</div></div>
+    <div class="kc"><div class="kl">ساعة الانتهاء</div><div class="kv">17:00</div><div class="ks">مساءً</div></div>`;
+}
+
+// ── PAYROLL (updated — uses real penalty data) ──
+function rPay(){
+  const tb=document.getElementById('payB');let tot=0;tb.innerHTML='';
+  emps.forEach(e=>{
+    const er=recs.filter(r=>r.eId===e.id);
+    const days=[...new Set(er.filter(r=>r.type==='checkin').map(r=>r.date))].length;
+    const abs=Math.max(0,26-days);
+    const dly=e.salary/26;
+    const bon=days>=25?200:0;
+    const absD=abs*dly;
+    // ── real penalty from lائحة ──
+    const pen=calcPenalties(e.id,e.salary);
+    const lateD=pen.totalDeduct;
+    const total=e.salary+bon-absD-lateD;
+    tot+=total;
+    tb.innerHTML+=`<tr>
+      <td><strong>${e.name}</strong><br><span style="font-size:11px;color:var(--mu)">${e.job}</span></td>
+      <td>${days}/26</td>
+      <td>${e.salary.toLocaleString()}</td>
+      <td style="color:var(--g)">+${bon}</td>
+      <td style="color:var(--r)">-${absD.toFixed(0)}</td>
+      <td style="color:var(--r)">-${lateD.toFixed(0)} <span style="font-size:10px">(${pen.lateCount} تأخير)</span></td>
+      <td><strong style="color:var(--p)">${Math.max(0,total).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')} EGP</strong></td></tr>`;
+  });
+  document.getElementById('payKPI').innerHTML=`
+    <div class="kc"><div class="kl">إجمالي المرتبات</div><div class="kv">${tot.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div><div class="ks">EGP</div></div>
+    <div class="kc"><div class="kl">عدد الموظفين</div><div class="kv">${emps.length}</div><div class="ks">موظف</div></div>
+    <div class="kc"><div class="kl">متوسط الراتب</div><div class="kv">${(tot/emps.length).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div><div class="ks">EGP</div></div>`;
+}
+
+// ── EMPLOYEE TABLE ──
+function rEmpT(){
+  const tb=document.getElementById('empTB');tb.innerHTML='';
+  const pws=lpw();
+  emps.forEach((e,i)=>{
+    const u=eLink(e.token);
+    const rec=pws[e.id];
+    const st=!rec?'<span class="bdg bw">لم يدخل</span>'
+      :!rec.changed?'<span class="bdg bw">مبدئية فقط</span>'
+      :'<span class="bdg bs">✅ شخصية</span>';
+    tb.innerHTML+=`<tr>
+      <td>${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:${e.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px">${e.name.charAt(0)}</div>${e.name}</div></td>
+      <td>${e.job}</td>
+      <td>${e.salary.toLocaleString()} EGP</td>
+      <td dir="ltr">+${e.phone}</td>
+      <td><code style="background:#fff3cd;padding:2px 7px;border-radius:5px;font-size:12px;">${e.initPw||'—'}</code></td>
+      <td>${st}</td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap;">
+        <button class="btn bsm bp" onclick="cpL('${u}')">📋</button>
+        <button class="btn bsm ba" onclick="wL('${e.phone}','${e.name}','${u}','${e.initPw}')">💬</button>
+        <button class="btn bsm br2" onclick="setInitPw('${e.id}','${e.name}')">🔄</button>
+        <button class="btn bsm br2" onclick="delE('${e.id}')">🗑️</button>
+      </td></tr>`;
+  });
+}
+function addEmp(){
+  const n=document.getElementById('nN').value.trim();
+  const j=document.getElementById('nJ').value.trim();
+  const s=parseInt(document.getElementById('nS').value)||0;
+  const p=document.getElementById('nP').value.trim().replace(/\D/g,'');
+  const ip=document.getElementById('nIP').value.trim();
+  const lt=parseInt(document.getElementById('nLT').value)||21;
+  if(!n){showToast('❌ أدخل اسم الموظف','err');return;}
+  if(!ip||ip.length<4){showToast('❌ أدخل كلمة سر مبدئية (4 أحرف على الأقل)','err');return;}
+  const id='e'+Date.now();const tok=btoa(id+'_opt'+Date.now());
+  const cls=['#1a3c5e','#c8a84b','#27ae60','#e74c3c','#9b59b6','#3498db','#e67e22'];
+  emps.push({id,name:n,title:j,job:j,salary:s,phone:p,color:cls[emps.length%cls.length],token:tok,initPw:ip,leaveTotal:lt,leaveUsed:0});
+  se(emps);rEmpT();rLinks();
+  ['nN','nJ','nS','nP','nIP','nLT'].forEach(x=>document.getElementById(x).value='');
+  showToast('✅ تمت الإضافة — الكلمة المبدئية: '+ip,'ok');
+}
+function delE(id){emps=emps.filter(e=>e.id!==id);se(emps);rEmpT();rLinks();showToast('✅ تم الحذف','ok');}
+
+// ── REPORTS ──
+function rRep(){
+  const tb=document.getElementById('repB');tb.innerHTML='';
+  emps.forEach(e=>{
+    const er=recs.filter(r=>r.eId===e.id);
+    const days=[...new Set(er.filter(r=>r.type==='checkin').map(r=>r.date))].length;
+    let hrs=0;
+    [...new Set(er.map(r=>r.date))].forEach(d=>{
+      const ci=er.find(r=>r.date===d&&r.type==='checkin');const co=er.find(r=>r.date===d&&r.type==='checkout');
+      if(ci&&co) hrs+=(co.ts-ci.ts)/3600000;
+    });
+    const p=Math.min(100,(days/26*100)).toFixed(0);
+    tb.innerHTML+=`<tr><td><strong>${e.name}</strong></td><td>${days}</td><td>${Math.max(0,26-days)}</td><td>${hrs.toFixed(1)} س</td><td><span class="bdg ${p>=90?'bs':p>=70?'bw':'bd'}">${p}%</span></td></tr>`;
+  });
+}
+
+// ── EMPLOYEE SCREEN (minimal — name + title + checkin/checkout + late + leave) ──
+function showEmp(e){
+  curEmp=e;show('s-emp');
+  document.getElementById('eAv').textContent=e.name.charAt(0);
+  document.getElementById('eAv').style.background=e.color;
+  document.getElementById('eName').textContent=e.name;
+  document.getElementById('eTitle').textContent=e.title||e.job||'';
+  rToday();rLate();rLeaveEmp();
+}
+function getLoc(){
+  document.getElementById('eLoc').textContent='جاري تحديد الموقع...';
+  if(!navigator.geolocation){document.getElementById('eLoc').textContent='المتصفح لا يدعم GPS';return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    eLat=pos.coords.latitude;eLng=pos.coords.longitude;eAddr=`${eLat.toFixed(5)}, ${eLng.toFixed(5)}`;
+    document.getElementById('eLoc').textContent='📍 '+eAddr;
+    document.getElementById('eMap').innerHTML=`<strong style="color:var(--g)">✅ تم تحديد الموقع</strong><br><span style="font-size:12px">خط العرض: ${eLat.toFixed(6)} | خط الطول: ${eLng.toFixed(6)}</span><br><br><a href="https://maps.google.com/?q=${eLat},${eLng}" target="_blank" class="btn bsm ba">📌 فتح في خرائط Google</a>`;
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${eLat}&lon=${eLng}&format=json`).then(r=>r.json()).then(d=>{if(d.display_name){eAddr=d.display_name;document.getElementById('eLoc').textContent='📍 '+d.display_name.substring(0,55)+'...';}}).catch(()=>{});
+  },()=>{document.getElementById('eLoc').textContent='تعذر تحديد الموقع — اسمح بالوصول في المتصفح';showToast('❌ يرجى السماح بالوصول إلى الموقع','err');});
+}
+function eRec(type){
+  if(!curEmp) return;
+  const now=new Date();
+  const rec={id:Date.now(),eId:curEmp.id,eN:curEmp.name,date:now.toLocaleDateString('en-CA'),time:now.toLocaleTimeString('ar-EG'),ts:now.getTime(),type,lat:eLat,lng:eLng,address:eAddr,note:''};
+  recs.unshift(rec);sr(recs);
+  showToast(type==='checkin'?'✅ تم تسجيل الحضور بنجاح':'🚪 تم تسجيل الانصراف بنجاح','ok');
+  rToday();rLate();rLeaveEmp();
+}
+
+// سجل اليوم — يظهر وقت الحضور والانصراف فقط لهذا الموظف
+function rToday(){
+  const td=new Date().toLocaleDateString('en-CA');
+  const tr=recs.filter(r=>r.eId===curEmp.id&&r.date===td);
+  const d=document.getElementById('todayS');
+  if(!tr.length){
+    d.innerHTML='<p style="color:var(--mu);font-size:13px;text-align:center;">لم يتم تسجيل أي حضور اليوم بعد.</p>';
+    return;
+  }
+  d.innerHTML='';
+  tr.forEach(r=>{
+    const late=r.type==='checkin'?lateMinutes(r.time):0;
+    const lateTag=late>0?`<span style="font-size:11px;color:var(--r);margin-right:6px;">⚠️ تأخير ${late} دقيقة</span>`:'';
+    d.innerHTML+=`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;margin-bottom:7px;background:${r.type==='checkin'?'#eafaf1':'#fef9e7'};border:1px solid ${r.type==='checkin'?'#a9dfbf':'#f9e4b7'}">
+      <div style="font-size:22px">${r.type==='checkin'?'☀️':'🌙'}</div>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:900;color:var(--p)">${r.time}</div>
+        <div style="font-size:12px;color:var(--mu)">${r.type==='checkin'?'تسجيل حضور':'تسجيل انصراف'} ${lateTag}</div>
+      </div>
+    </div>`;
+  });
+}
+
+// ساعات التأخير فقط — الشهر الحالي — لهذا الموظف فقط
+function rLate(){
+  const myRecs=recs.filter(r=>r.eId===curEmp.id);
+  const rows=Object.values(grp(myRecs)).sort((a,b)=>a.date.localeCompare(b.date));
+  let totalLateMin=0, lateCount=0;
+  rows.forEach(row=>{
+    if(row.ci){
+      const late=lateMinutes(row.ci.time);
+      if(late>0){totalLateMin+=late;lateCount++;}
+    }
+  });
+  const hrs=Math.floor(totalLateMin/60);
+  const mins=totalLateMin%60;
+  const d=document.getElementById('lateDisplay');
+  if(totalLateMin===0){
+    d.innerHTML=`
+      <div style="font-size:48px;margin-bottom:8px;">✅</div>
+      <div style="font-size:18px;font-weight:700;color:var(--g)">لا يوجد تأخير مسجل</div>
+      <div style="font-size:12px;color:var(--mu);margin-top:4px">ملتزم بمواعيد العمل هذا الشهر</div>`;
+  } else {
+    const clr=totalLateMin>120?'var(--r)':totalLateMin>60?'var(--w)':'var(--a)';
+    d.innerHTML=`
+      <div style="font-size:48px;margin-bottom:8px;">⏰</div>
+      <div style="font-size:36px;font-weight:900;color:${clr}">${hrs>0?hrs+' س ':''} ${mins} د</div>
+      <div style="font-size:13px;color:var(--mu);margin-top:4px">إجمالي التأخير هذا الشهر</div>
+      <div style="font-size:12px;color:var(--mu);margin-top:2px">${lateCount} مرة تأخير مسجلة</div>
+      <div style="margin-top:12px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px 14px;font-size:12px;color:#856404;">
+        ⚠️ فترة السماح حتى 09:15 صباحاً — أي تأخير بعدها يُحتسب
+      </div>`;
+  }
+}
+
+// ── LEAVE MANAGEMENT ──
+function llv(){return JSON.parse(localStorage.getItem('op_lv')||'[]');}
+function slv(d){localStorage.setItem('op_lv',JSON.stringify(d));}
+
+function leaveRemaining(emp){
+  const logs=llv().filter(l=>l.eId===emp.id&&l.type!=='مرضية'&&l.type!=='بدون راتب');
+  const used=logs.reduce((s,l)=>s+parseFloat(l.days||0),0);
+  const total=emp.leaveTotal||21;
+  return {total, used: (emp.leaveUsed||0)+used, remaining: total-((emp.leaveUsed||0)+used)};
+}
+
+function rLeave(){
+  // populate employee select
+  const sel=document.getElementById('lvEmp');
+  sel.innerHTML='';
+  emps.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name+' — '+e.title;sel.appendChild(o);});
+
+  // KPIs
+  const tot=emps.reduce((s,e)=>s+(e.leaveTotal||0),0);
+  const rem=emps.reduce((s,e)=>s+leaveRemaining(e).remaining,0);
+  document.getElementById('leaveKPI').innerHTML=`
+    <div class="kc"><div class="kl">إجمالي الرصيد الكلي</div><div class="kv">${tot}</div><div class="ks">يوم لجميع الموظفين</div></div>
+    <div class="kc"><div class="kl">إجمالي المتبقي</div><div class="kv" style="color:var(--g)">${rem.toFixed(1)}</div><div class="ks">يوم متاح</div></div>
+    <div class="kc"><div class="kl">إجمالي المستخدم</div><div class="kv" style="color:var(--a)">${(tot-rem).toFixed(1)}</div><div class="ks">يوم مستخدم</div></div>`;
+
+  // main table
+  const tb=document.getElementById('leaveB');tb.innerHTML='';
+  emps.forEach(e=>{
+    const {total,used,remaining}=leaveRemaining(e);
+    const pct=Math.min(100,(used/total*100)).toFixed(0);
+    const clr=remaining<=3?'var(--r)':remaining<=7?'var(--w)':'var(--g)';
+    const bar=`<div style="background:var(--br);border-radius:4px;height:10px;overflow:hidden;min-width:100px;">
+      <div style="height:100%;width:${pct}%;background:${clr};border-radius:4px;transition:width .4s;"></div></div>
+      <span style="font-size:11px;color:var(--mu)">${pct}% مستخدم</span>`;
+    tb.innerHTML+=`<tr>
+      <td><div style="display:flex;align-items:center;gap:7px">
+        <div style="width:30px;height:30px;border-radius:50%;background:${e.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px">${e.name.charAt(0)}</div>
+        <strong>${e.name}</strong></div></td>
+      <td style="font-size:12px;color:var(--mu)">${e.title||e.job}</td>
+      <td><strong>${total}</strong> يوم</td>
+      <td style="color:var(--a)">${used.toFixed(1)} يوم</td>
+      <td><strong style="color:${clr};font-size:16px">${remaining.toFixed(1)}</strong> يوم</td>
+      <td>${bar}</td>
+      <td>
+        <button class="btn bsm bp" onclick="adjLeave('${e.id}',${remaining})">✏️ تعديل</button>
+      </td></tr>`;
+  });
+
+  // log table
+  const logs=llv().sort((a,b)=>b.date.localeCompare(a.date));
+  const lb=document.getElementById('leaveLogB');lb.innerHTML='';
+  if(!logs.length){lb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">لا توجد إجازات مسجلة بعد</td></tr>';return;}
+  logs.forEach((l,i)=>{
+    const emp=emps.find(e=>e.id===l.eId);
+    lb.innerHTML+=`<tr>
+      <td>${emp?.name||'—'}</td>
+      <td><span class="bdg bi">${l.type}</span></td>
+      <td>${l.date}</td>
+      <td><strong>${l.days}</strong> يوم</td>
+      <td style="font-size:12px;color:var(--mu)">${l.note||'—'}</td>
+      <td><button class="btn bsm br2" onclick="delLeave(${i})">🗑️</button></td></tr>`;
+  });
+}
+
+function addLeave(){
+  const eId=document.getElementById('lvEmp').value;
+  const days=parseFloat(document.getElementById('lvDays').value);
+  const date=document.getElementById('lvFrom').value;
+  const type=document.getElementById('lvType').value;
+  if(!eId||!days||days<=0){showToast('❌ أدخل الموظف وعدد الأيام','err');return;}
+  const emp=emps.find(e=>e.id===eId);
+  const {remaining}=leaveRemaining(emp);
+  if((type==='سنوية'||type==='عارضة')&&days>remaining){
+    showToast('❌ الرصيد المتاح ('+remaining.toFixed(1)+' يوم) أقل من المطلوب','err');return;
+  }
+  const logs=llv();
+  logs.push({eId,days,date:date||new Date().toLocaleDateString('en-CA'),type,note:''});
+  slv(logs);
+  showToast('✅ تم تسجيل '+days+' يوم '+type+' لـ '+emp.name,'ok');
+  document.getElementById('lvDays').value='';
+  document.getElementById('lvFrom').value='';
+  rLeave();
+}
+
+function delLeave(i){
+  const logs=llv();logs.splice(i,1);slv(logs);
+  showToast('✅ تم حذف السجل','ok');rLeave();
+}
+
+function adjLeave(id,cur){
+  const emp=emps.find(e=>e.id===id);
+  const val=prompt(`تعديل الرصيد المستخدم لـ ${emp.name}\nالرصيد الحالي: ${leaveRemaining(emp).used} يوم\nأدخل الرصيد المستخدم الجديد:`);
+  if(val===null) return;
+  const n=parseFloat(val);
+  if(isNaN(n)||n<0){showToast('❌ قيمة غير صحيحة','err');return;}
+  const idx=emps.findIndex(e=>e.id===id);
+  emps[idx].leaveUsed=n;
+  se(emps);rLeave();
+  showToast('✅ تم تحديث الرصيد','ok');
+}
+
+// ── EMPLOYEE LEAVE DISPLAY ──
+function rLeaveEmp(){
+  const d=document.getElementById('leaveEmpDisplay');
+  if(!d||!curEmp) return;
+  const {total,used,remaining}=leaveRemaining(curEmp);
+  const pct=Math.min(100,(used/total*100)).toFixed(0);
+  const clr=remaining<=3?'var(--r)':remaining<=7?'var(--w)':'var(--g)';
+  d.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:#f0f4f8;border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--p)">${total}</div>
+        <div style="font-size:11px;color:var(--mu)">رصيد البداية</div>
+      </div>
+      <div style="background:#fff3cd;border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--a)">${used.toFixed(1)}</div>
+        <div style="font-size:11px;color:var(--mu)">مستخدم</div>
+      </div>
+      <div style="background:${remaining<=3?'#fde8e8':remaining<=7?'#fff3cd':'#eafaf1'};border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:${clr}">${remaining.toFixed(1)}</div>
+        <div style="font-size:11px;color:var(--mu)">متبقي</div>
+      </div>
+    </div>
+    <div style="background:var(--br);border-radius:5px;height:12px;overflow:hidden;margin-bottom:8px;">
+      <div style="height:100%;width:${pct}%;background:${clr};border-radius:5px;transition:width .5s;"></div>
+    </div>
+    <div style="font-size:12px;color:var(--mu)">${pct}% من رصيدك السنوي مستخدم</div>
+    ${remaining<=5?`<div style="margin-top:10px;background:#fde8e8;border:1px solid #f5c6cb;border-radius:8px;padding:8px 12px;font-size:12px;color:var(--r);">⚠️ رصيدك المتبقي منخفض — تبقى ${remaining.toFixed(1)} أيام فقط</div>`:''}`;
+}
+
+
+function grp(arr){
+  const g={};
+  arr.forEach(r=>{const k=r.eId+'_'+r.date;if(!g[k]) g[k]={eId:r.eId,eN:r.eN,date:r.date,ci:null,co:null};if(r.type==='checkin'&&!g[k].ci) g[k].ci=r;if(r.type==='checkout') g[k].co=r;});
+  return g;
+}
+function ch(row){
+  if(row.ci&&row.co){const d=(row.co.ts-row.ci.ts)/3600000;return{h:d.toFixed(1)+' س',b:`<span class="bdg ${d>=8?'bs':'bw'}">${d>=8?'مكتمل':'ناقص'}</span>`};}
+  if(row.ci) return{h:'--',b:'<span class="bdg bi">حضور فقط</span>'};
+  return{h:'--',b:'<span class="bdg bd">غياب</span>'};
+}
+function dl(c,f){const b=new Blob([c],{type:'text/csv;charset=utf-8;'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=f;a.click();}
+function showToast(m,t='ok'){const x=document.getElementById('toast');x.textContent=m;x.className='show '+t;setTimeout(()=>x.className='',3200);}
+
+route();
+</script>
+</body>
+</html>

@@ -81,17 +81,37 @@ tr:hover td{background:#f8fafc;}
   <div style="text-align:left"><div id="clk">--:--:--</div><div id="dt"></div></div>
 </header>
 
-<!-- SCREEN: Admin Login -->
+<!-- SCREEN: Login (Admin / Employee) -->
 <div class="screen active" id="s-login">
   <div class="wrap" style="max-width:400px;margin-top:60px;">
     <div class="card" style="text-align:center;padding:34px;">
       <div style="font-size:46px;margin-bottom:10px;">🔐</div>
-      <h2 style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:6px;">لوحة تحكم المدير</h2>
-      <p style="font-size:12px;color:var(--mu);margin-bottom:22px;">أدخل كلمة المرور للوصول</p>
-      <div class="fg" style="margin-bottom:14px;"><input type="password" id="apw" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')aLogin()"></div>
-      <button class="btn bp bfl" onclick="aLogin()">🔓 دخول كمدير</button>
-      <div style="margin:18px 0;color:var(--mu);font-size:12px;">— أو —</div>
-      <p style="font-size:12px;color:var(--mu);">هل أنت موظف؟ استخدم الرابط الخاص بك الذي أرسله لك مديرك</p>
+      <div style="display:flex;gap:6px;margin-bottom:22px;background:#eef3f9;border-radius:10px;padding:4px;">
+        <button id="tabAdminBtn" class="btn bsm bp" style="flex:1;justify-content:center;" onclick="loginTab('admin')">👔 مدير</button>
+        <button id="tabEmpBtn" class="btn bsm" style="flex:1;justify-content:center;background:none;color:var(--mu);" onclick="loginTab('emp')">👤 موظف</button>
+      </div>
+
+      <div id="loginAdminPane">
+        <h2 style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:6px;">لوحة تحكم المدير</h2>
+        <p style="font-size:12px;color:var(--mu);margin-bottom:22px;">أدخل كلمة المرور للوصول</p>
+        <div class="fg" style="margin-bottom:14px;"><input type="password" id="apw" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')aLogin()"></div>
+        <button class="btn bp bfl" onclick="aLogin()">🔓 دخول كمدير</button>
+      </div>
+
+      <div id="loginEmpPane" style="display:none;">
+        <h2 style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:6px;">دخول الموظف</h2>
+        <p style="font-size:12px;color:var(--mu);margin-bottom:22px;">أدخل اسم المستخدم وكلمة السر اللذين أرسلهما لك مديرك</p>
+        <div class="fg" style="margin-bottom:11px;"><input id="euName" placeholder="اسم المستخدم" onkeydown="if(event.key==='Enter')document.getElementById('euPass').focus()"></div>
+        <div class="fg" style="margin-bottom:14px;">
+          <div style="position:relative;">
+            <input type="password" id="euPass" placeholder="كلمة السر" onkeydown="if(event.key==='Enter')eLoginSubmit()">
+            <span onclick="togglePw('euPass')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;color:var(--mu);">👁</span>
+          </div>
+        </div>
+        <div id="euErr" style="color:var(--r);font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+        <button class="btn bg bfl" onclick="eLoginSubmit()">🔓 دخول</button>
+        <div style="margin-top:14px;font-size:11px;color:var(--mu);">أو استخدم رابطك الخاص إن كان متوفراً لديك</div>
+      </div>
     </div>
   </div>
 </div>
@@ -167,6 +187,10 @@ tr:hover td{background:#f8fafc;}
         <button onclick="forgotPw()" style="margin-top:14px;width:100%;padding:9px;background:none;border:1px solid var(--br);border-radius:8px;font-family:'Segoe UI','Tahoma','Arial','Helvetica Neue',sans-serif;font-size:12px;color:var(--mu);cursor:pointer;">🔄 نسيت كلمة السر؟ تواصل مع المدير</button>
       </div>
 
+      <div style="text-align:center;margin-top:16px;">
+        <a href="javascript:void(0)" onclick="backFromVerify()" style="font-size:11px;color:var(--mu);text-decoration:underline;">🔙 رجوع لصفحة الدخول</a>
+      </div>
+
     </div>
   </div>
 </div>
@@ -208,7 +232,7 @@ tr:hover td{background:#f8fafc;}
       </div>
       <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
         <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
-        <div>اسحب الملف <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">attendance_v5.html</code> وأفلته في المنطقة الزرقاء</div>
+        <div>اسحب الملف <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">index.html</code> وأفلته في المنطقة الزرقاء (يفضّل رفعه داخل مجلد ليأخذ اسم <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">index.html</code> كصفحة رئيسية تلقائياً)</div>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
         <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
@@ -362,8 +386,18 @@ tr:hover td{background:#f8fafc;}
   <div class="wrap ap" id="ap-pay">
     <div class="kpi" id="payKPI"></div>
     <div class="card">
-      <div class="ct">💰 كشف المرتبات</div>
+      <div class="ct">💰 كشف المرتبات — تقدير حي (الشهر الجاري، غير نهائي)</div>
       <div class="tbl"><table><thead><tr><th>الموظف</th><th>أيام الحضور</th><th>الراتب الأساسي</th><th>بدل حضور</th><th>خصم غياب</th><th>مكافأة</th><th>الإجمالي</th></tr></thead><tbody id="payB"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="ct">📅 سجل المرتبات الشهرية المعتمدة (تلقائي)</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;">يتم اعتماد مرتب كل شهر تلقائياً بمجرد بدء الشهر التالي (عند فتح لوحة التحكم)، ويُحفظ كسجل نهائي مقفول لا يتغير — يشمل خصومات التأخير والغياب والإجازات بدون راتب.</p>
+      <div class="kpi" id="payHistKPI"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+        <select id="payHistSel" onchange="rPayHist()" style="padding:7px 11px;border:1px solid var(--br);border-radius:7px;font-family:'Segoe UI','Tahoma','Arial','Helvetica Neue',sans-serif;font-size:12px;"></select>
+        <button class="btn bsm ba" onclick="exPayHist()">⬇️ CSV</button>
+      </div>
+      <div class="tbl"><table><thead><tr><th>الموظف</th><th>أيام الحضور</th><th>الراتب الأساسي</th><th>بدل حضور</th><th>خصم غياب</th><th>خصم تأخير</th><th>خصم إجازة بدون راتب</th><th>الصافي</th></tr></thead><tbody id="payHistB"></tbody></table></div>
     </div>
   </div>
 
@@ -376,6 +410,7 @@ tr:hover td{background:#f8fafc;}
         <div class="fg"><label>المسمى الوظيفي</label><input id="nJ" placeholder="مدير إداري / مهندس أول..."></div>
         <div class="fg"><label>الراتب الأساسي (EGP)</label><input type="number" id="nS" placeholder="6000"></div>
         <div class="fg"><label>رقم الهاتف</label><input id="nP" placeholder="+201..."></div>
+        <div class="fg"><label>اسم المستخدم 👤</label><input id="nU" placeholder="مثال: m.ahmed" autocomplete="off" style="direction:ltr;text-align:left;"></div>
         <div class="fg"><label>كلمة السر المبدئية 🔑</label><input id="nIP" placeholder="مثال: Optima@123" autocomplete="off"></div>
         <div class="fg"><label>رصيد الإجازات السنوي (أيام)</label><input type="number" id="nLT" placeholder="21 أو 30"></div>
       </div>
@@ -383,7 +418,7 @@ tr:hover td{background:#f8fafc;}
     </div>
     <div class="card">
       <div class="ct">👥 قائمة الموظفين</div>
-      <div class="tbl"><table><thead><tr><th>#</th><th>الاسم</th><th>الوظيفة</th><th>الراتب</th><th>الهاتف</th><th>الكلمة المبدئية</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="empTB"></tbody></table></div>
+      <div class="tbl"><table><thead><tr><th>#</th><th>الاسم</th><th>الوظيفة</th><th>الراتب</th><th>الهاتف</th><th>اسم المستخدم</th><th>الكلمة المبدئية</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="empTB"></tbody></table></div>
     </div>
   </div>
 
@@ -461,10 +496,10 @@ const ADMIN_PASS = 'optima2025'; // غيّر كلمة المرور هنا
 
 // ── DATA ──
 function le(){return JSON.parse(localStorage.getItem('op_e')||'null')||[
-  {id:'mhsn', name:'محمد حسن',         title:'مدير إداري',                    job:'مدير إداري',          salary:20000, phone:'201000000001', color:'#1a3c5e', token:btoa('mhsn_opt25'),  initPw:'Optima@1', leaveTotal:30, leaveUsed:5},
-  {id:'mkhd', name:'محمد الخضراوي',    title:'مهندس أول موقع',               job:'مهندس أول موقع',       salary:30000, phone:'201000000002', color:'#c8a84b', token:btoa('mkhd_opt25'),  initPw:'Optima@2', leaveTotal:21, leaveUsed:3},
-  {id:'slah', name:'صلاح فتحي',        title:'مهندس أول إنشاءات طرق',        job:'مهندس أول إنشاءات طرق', salary:45000, phone:'201000000003', color:'#27ae60', token:btoa('slah_opt25'),  initPw:'Optima@3', leaveTotal:15, leaveUsed:2},
-  {id:'abdt', name:'عبد الحميد طه',    title:'مدير حسابات',                  job:'مدير حسابات',           salary:40000, phone:'201000000004', color:'#9b59b6', token:btoa('abdt_opt25'),  initPw:'Optima@4', leaveTotal:21, leaveUsed:0},
+  {id:'mhsn', name:'محمد حسن',         title:'مدير إداري',                    job:'مدير إداري',          salary:20000, phone:'201000000001', color:'#1a3c5e', token:btoa('mhsn_opt25'),  username:'m.hassan',    initPw:'Optima@1', leaveTotal:30, leaveUsed:5},
+  {id:'mkhd', name:'محمد الخضراوي',    title:'مهندس أول موقع',               job:'مهندس أول موقع',       salary:30000, phone:'201000000002', color:'#c8a84b', token:btoa('mkhd_opt25'),  username:'m.elkhodrawy',initPw:'Optima@2', leaveTotal:21, leaveUsed:3},
+  {id:'slah', name:'صلاح فتحي',        title:'مهندس أول إنشاءات طرق',        job:'مهندس أول إنشاءات طرق', salary:45000, phone:'201000000003', color:'#27ae60', token:btoa('slah_opt25'),  username:'s.fathy',     initPw:'Optima@3', leaveTotal:15, leaveUsed:2},
+  {id:'abdt', name:'عبد الحميد طه',    title:'مدير حسابات',                  job:'مدير حسابات',           salary:40000, phone:'201000000004', color:'#9b59b6', token:btoa('abdt_opt25'),  username:'a.taha',      initPw:'Optima@4', leaveTotal:21, leaveUsed:0},
 ];}
 function se(d){localStorage.setItem('op_e',JSON.stringify(d));}
 function lr(){return JSON.parse(localStorage.getItem('op_r')||'[]');}
@@ -628,11 +663,31 @@ function lockUser(){
 
 function forgotPw(){showToast('تواصل مع المدير لإعادة تعيين كلمة السر','ok');}
 
+function backFromVerify(){
+  pendingEmp=null;
+  if(new URLSearchParams(location.search).get('t')) history.replaceState({},'',location.pathname);
+  show('s-login');
+}
+
 // ── إعادة تعيين كلمة السر من لوحة المدير ──
 function resetEmpPw(id,name){
   const pws=lpw();delete pws[id];spw(pws);
   showToast('✅ تم إعادة تعيين كلمة سر '+name+' — سيُدخل الكلمة المبدئية من جديد','ok');
   rLinks();rEmpT();
+}
+
+// ── تعيين/تعديل اسم المستخدم من المدير ──
+function setUsername(id,name){
+  const emp=emps.find(e=>e.id===id);
+  const val=prompt('اسم المستخدم الجديد لـ '+name+':',emp.username||'');
+  if(val===null) return;
+  const v=val.trim().toLowerCase().replace(/\s+/g,'');
+  if(v.length<3){showToast('❌ اسم المستخدم قصير جداً (3 أحرف على الأقل)','err');return;}
+  if(emps.some(e=>e.id!==id&&e.username===v)){showToast('❌ اسم المستخدم مستخدم بالفعل','err');return;}
+  const idx=emps.findIndex(e=>e.id===id);
+  emps[idx].username=v;se(emps);
+  showToast('✅ تم تحديث اسم المستخدم إلى: '+v,'ok');
+  rEmpT();rLinks();
 }
 
 // ── تعيين كلمة سر مبدئية جديدة من المدير ──
@@ -645,6 +700,37 @@ function setInitPw(id,name){
   const pws=lpw();delete pws[id];spw(pws);
   showToast('✅ تم تعيين الكلمة المبدئية وإعادة التعيين لـ '+name,'ok');
   rLinks();rEmpT();
+}
+
+// ── LOGIN SCREEN TABS (Admin / Employee) ──
+function loginTab(t){
+  const isA=t==='admin';
+  document.getElementById('loginAdminPane').style.display=isA?'block':'none';
+  document.getElementById('loginEmpPane').style.display=isA?'none':'block';
+  const ab=document.getElementById('tabAdminBtn'),eb=document.getElementById('tabEmpBtn');
+  ab.className='btn bsm '+(isA?'bp':''); ab.style.cssText=isA?'flex:1;justify-content:center;':'flex:1;justify-content:center;background:none;color:var(--mu);';
+  eb.className='btn bsm '+(!isA?'bp':''); eb.style.cssText=!isA?'flex:1;justify-content:center;':'flex:1;justify-content:center;background:none;color:var(--mu);';
+  document.getElementById('euErr').textContent='';
+}
+
+// ── EMPLOYEE LOGIN عبر اسم المستخدم وكلمة السر (بدون الحاجة لرابط خاص) ──
+function eLoginSubmit(){
+  const u=document.getElementById('euName').value.trim();
+  const p=document.getElementById('euPass').value;
+  const err=document.getElementById('euErr');
+  if(!u||!p){err.textContent='⚠️ أدخل اسم المستخدم وكلمة السر';return;}
+  const emp=emps.find(e=>e.username&&e.username.toLowerCase()===u.toLowerCase());
+  if(!emp){err.textContent='❌ بيانات الدخول غير صحيحة';return;}
+  pendingEmp=emp;
+  showVerify();
+  const pws=lpw();const rec=pws[emp.id];
+  if(!rec||!rec.changed){
+    document.getElementById('pwInit').value=p;
+    loginInit();
+  } else {
+    document.getElementById('pwLogin').value=p;
+    loginPw();
+  }
 }
 
 // ── ADMIN ──
@@ -677,6 +763,9 @@ function rLinks(){
       <div class="li">
         <div class="ln">${e.name} &nbsp;${statusBadge}</div>
         <div class="lj">${e.job} • ${e.salary.toLocaleString()} EGP</div>
+        <div style="margin-top:6px;background:#d0e8ff;border:1px solid #9ec9ef;border-radius:6px;padding:5px 10px;font-size:12px;color:#0d5c9e;">
+          👤 اسم المستخدم: <strong style="direction:ltr;display:inline-block;">${e.username||'—'}</strong>
+        </div>
         <div style="margin-top:6px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:5px 10px;font-size:12px;color:#856404;">
           🔑 الكلمة المبدئية: <strong>${e.initPw}</strong>
         </div>
@@ -695,14 +784,17 @@ function cpL(u){
   });
 }
 function wL(ph,nm,u,initPw){
+  const emp=emps.find(e=>e.phone===ph&&e.initPw===initPw);
+  const uname=emp?.username||'—';
   const m=encodeURIComponent(
     'مرحباً '+nm+'،\n\n'+
     '📌 رابطك الخاص لتسجيل الحضور:\n'+u+'\n\n'+
+    '👤 اسم المستخدم: '+uname+'\n'+
     '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
     '⚠️ عند أول دخول:\n'+
     '١. أدخل الكلمة المبدئية\n'+
     '٢. ستُطلب منك إنشاء كلمة سر خاصة بك\n'+
-    '٣. من المرة الثانية ادخل بكلمتك أنت\n\n'+
+    '٣. من المرة الثانية ادخل باسم المستخدم وكلمة سرك أنت\n\n'+
     'Optima — إدارة الموارد البشرية'
   );
   window.open('https://wa.me/'+ph+'?text='+m,'_blank');
@@ -715,13 +807,12 @@ function buildURLs(){
   if(!container) return;
 
   // إذا لم يُدخل عنوان بعد — أظهر placeholder
-  const fileName='attendance_v5.html';
   const displayBase=base||'https://ahmedsamier83-max.github.io/Optima-HR';
   const isReal=base.startsWith('http');
 
   container.innerHTML='';
   emps.forEach(e=>{
-    const url=`${displayBase}/${fileName}?t=${encodeURIComponent(e.token)}`;
+    const url=`${displayBase}/?t=${encodeURIComponent(e.token)}`;
     const pws=lpw();
     const rec=pws[e.id];
     const pwStatus=!rec?'⏳ لم يدخل بعد':!rec.changed?'🔑 أدخل المبدئية فقط':'✅ كلمة سر شخصية';
@@ -735,7 +826,9 @@ function buildURLs(){
           <div style="font-size:12px;color:var(--mu);">${e.title||e.job} &nbsp;|&nbsp; ${pwStatus}</div>
         </div>
         <div style="text-align:left;">
-          <div style="font-size:11px;color:var(--mu);">كلمة السر المبدئية</div>
+          <div style="font-size:11px;color:var(--mu);">اسم المستخدم</div>
+          <code style="background:#d0e8ff;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700;direction:ltr;display:inline-block;">${e.username||'—'}</code>
+          <div style="font-size:11px;color:var(--mu);margin-top:5px;">كلمة السر المبدئية</div>
           <code style="background:#fff3cd;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700;">${e.initPw}</code>
         </div>
       </div>
@@ -750,8 +843,8 @@ function buildURLs(){
       <!-- أزرار -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn bsm bp" onclick="cpURL('url_${e.id}')">📋 نسخ الرابط</button>
-        <button class="btn bsm ba" onclick="sendWhatsApp('${e.phone}','${e.name}','${e.title||e.job}','${e.initPw}','url_${e.id}')">💬 إرسال واتساب</button>
-        <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="copyFullMsg('${e.name}','${e.title||e.job}','${e.initPw}','url_${e.id}')">📄 نسخ الرسالة كاملة</button>
+        <button class="btn bsm ba" onclick="sendWhatsApp('${e.phone}','${e.name}','${e.title||e.job}','${e.username||''}','${e.initPw}','url_${e.id}')">💬 إرسال واتساب</button>
+        <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="copyFullMsg('${e.name}','${e.title||e.job}','${e.username||''}','${e.initPw}','url_${e.id}')">📄 نسخ الرسالة كاملة</button>
       </div>
       <!-- hidden span to hold URL -->
       <span id="url_${e.id}" style="display:none;">${url}</span>
@@ -765,35 +858,37 @@ function cpURL(spanId){
   .catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✅ تم نسخ الرابط','ok');});
 }
 
-function sendWhatsApp(phone,name,title,initPw,spanId){
+function sendWhatsApp(phone,name,title,username,initPw,spanId){
   const url=document.getElementById(spanId)?.textContent||'';
   const msg=encodeURIComponent(
     'مرحباً '+name+'،\n\n'+
-    '📌 رابطك الخاص لتسجيل الحضور والانصراف:\n'+url+'\n\n'+
+    '📌 يمكنك الدخول عبر رابطك الخاص:\n'+url+'\n\n'+
+    'أو عبر صفحة الدخول العامة باستخدام:\n'+
+    '👤 اسم المستخدم: '+username+'\n'+
     '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
     '⚠️ خطوات أول دخول:\n'+
-    '١. افتح الرابط\n'+
-    '٢. أدخل كلمة السر المبدئية\n'+
-    '٣. أنشئ كلمة سرك الخاصة\n'+
-    '٤. من المرة الثانية ادخل بكلمتك أنت\n\n'+
-    '🔒 الرابط خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
+    '١. أدخل كلمة السر المبدئية\n'+
+    '٢. أنشئ كلمة سرك الخاصة\n'+
+    '٣. من المرة الثانية ادخل باسم المستخدم وكلمتك أنت\n\n'+
+    '🔒 حسابك خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
     'Optima — إدارة الموارد البشرية'
   );
   window.open('https://wa.me/'+phone.replace(/\D/g,'')+'?text='+msg,'_blank');
 }
 
-function copyFullMsg(name,title,initPw,spanId){
+function copyFullMsg(name,title,username,initPw,spanId){
   const url=document.getElementById(spanId)?.textContent||'';
   const msg=
     'مرحباً '+name+'،\n\n'+
-    '📌 رابطك الخاص لتسجيل الحضور والانصراف:\n'+url+'\n\n'+
+    '📌 يمكنك الدخول عبر رابطك الخاص:\n'+url+'\n\n'+
+    'أو عبر صفحة الدخول العامة باستخدام:\n'+
+    '👤 اسم المستخدم: '+username+'\n'+
     '🔑 كلمة السر المبدئية: '+initPw+'\n\n'+
     '⚠️ خطوات أول دخول:\n'+
-    '١. افتح الرابط\n'+
-    '٢. أدخل كلمة السر المبدئية\n'+
-    '٣. أنشئ كلمة سرك الخاصة\n'+
-    '٤. من المرة الثانية ادخل بكلمتك أنت\n\n'+
-    '🔒 الرابط خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
+    '١. أدخل كلمة السر المبدئية\n'+
+    '٢. أنشئ كلمة سرك الخاصة\n'+
+    '٣. من المرة الثانية ادخل باسم المستخدم وكلمتك أنت\n\n'+
+    '🔒 حسابك خاص بك فقط ولا يمكن لأحد الدخول بدون كلمة سرك\n\n'+
     'Optima — إدارة الموارد البشرية';
   navigator.clipboard.writeText(msg).then(()=>showToast('✅ تم نسخ الرسالة كاملة','ok'))
   .catch(()=>{const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✅ تم نسخ الرسالة كاملة','ok');});
@@ -890,9 +985,12 @@ function earlyLeavePenaltyFraction(earlyMin, occurrence){
   return 2; // المرة الرابعة
 }
 
-// احتساب الجزاءات لموظف معيّن
-function calcPenalties(empId, salary){
-  const er=recs.filter(r=>r.eId===empId).sort((a,b)=>a.ts-b.ts);
+// احتساب الجزاءات لموظف معيّن — fromDate/toDate اختياريان لحصر الحساب في شهر معيّن (YYYY-MM-DD)
+function calcPenalties(empId, salary, fromDate, toDate){
+  let er=recs.filter(r=>r.eId===empId);
+  if(fromDate) er=er.filter(r=>r.date>=fromDate);
+  if(toDate) er=er.filter(r=>r.date<=toDate);
+  er=er.sort((a,b)=>a.ts-b.ts);
   const dailyRate=salary/26;
   const hourlyRate=salary/(26*8);
 
@@ -1008,6 +1106,107 @@ function rPay(){
     <div class="kc"><div class="kl">إجمالي المرتبات</div><div class="kv">${tot.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div><div class="ks">EGP</div></div>
     <div class="kc"><div class="kl">عدد الموظفين</div><div class="kv">${emps.length}</div><div class="ks">موظف</div></div>
     <div class="kc"><div class="kl">متوسط الراتب</div><div class="kv">${(tot/emps.length).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div><div class="ks">EGP</div></div>`;
+  ensureAutoPayroll();
+  rPayHistSelect();
+}
+
+// ── AUTOMATIC MONTHLY PAYROLL (يُعتمد ويُقفل تلقائياً بعد نهاية كل شهر) ──
+function lph(){return JSON.parse(localStorage.getItem('op_payroll_hist')||'{}');}
+function sph(d){localStorage.setItem('op_payroll_hist',JSON.stringify(d));}
+function ymKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function monthBounds(ym){
+  const [y,m]=ym.split('-').map(Number);
+  return {start:new Date(y,m-1,1), end:new Date(y,m,0)};
+}
+
+// يحسب مرتب شهر كامل ومقفول لجميع الموظفين — يشمل خصم الإجازات بدون راتب
+function computePayrollForMonth(ym){
+  const {start,end}=monthBounds(ym);
+  const startStr=start.toLocaleDateString('en-CA');
+  const endStr=end.toLocaleDateString('en-CA');
+  return emps.map(e=>{
+    const er=recs.filter(r=>r.eId===e.id && r.date>=startStr && r.date<=endStr);
+    const days=[...new Set(er.filter(r=>r.type==='checkin').map(r=>r.date))].length;
+    const abs=Math.max(0,26-days);
+    const dly=e.salary/26;
+    const bon=days>=25?200:0;
+    const absD=abs*dly;
+    const pen=calcPenalties(e.id,e.salary,startStr,endStr);
+    const unpaidDays=llv().filter(l=>l.eId===e.id&&l.type==='بدون راتب'&&l.date>=startStr&&l.date<=endStr)
+      .reduce((s,l)=>s+parseFloat(l.days||0),0);
+    const unpaidD=unpaidDays*dly;
+    const net=Math.max(0,e.salary+bon-absD-pen.totalDeduct-unpaidD);
+    return {empId:e.id,name:e.name,job:e.job,salary:e.salary,daysPresent:days,
+      bonus:bon,absenceDeduct:absD,lateCount:pen.lateCount,lateDeduct:pen.totalDeduct,
+      unpaidLeaveDays:unpaidDays,unpaidLeaveDeduct:unpaidD,net};
+  });
+}
+
+// يمر على كل الأشهر السابقة منذ أول سجل حضور، ويعتمد (يقفل) أي شهر منقضٍ لم يُعتمد بعد
+function ensureAutoPayroll(){
+  if(!recs.length) return;
+  const hist=lph();
+  const allDates=recs.map(r=>r.date).sort();
+  let cursor=new Date(allDates[0]);
+  cursor=new Date(cursor.getFullYear(),cursor.getMonth(),1);
+  const curMonthStart=new Date();
+  curMonthStart.setDate(1);curMonthStart.setHours(0,0,0,0);
+  let changed=false;
+  while(cursor<curMonthStart){
+    const ym=ymKey(cursor);
+    if(!hist[ym]){hist[ym]={generatedAt:new Date().toISOString(),rows:computePayrollForMonth(ym)};changed=true;}
+    cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,1);
+  }
+  if(changed) sph(hist);
+}
+
+function rPayHistSelect(){
+  const hist=lph();
+  const sel=document.getElementById('payHistSel');
+  if(!sel) return;
+  const months=Object.keys(hist).sort().reverse();
+  const prevVal=sel.value;
+  sel.innerHTML='';
+  if(!months.length){
+    sel.innerHTML='<option value="">لا يوجد سجل معتمد بعد</option>';
+    document.getElementById('payHistB').innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:14px">سيُعتمد أول سجل مرتبات تلقائياً بعد انتهاء الشهر الحالي</td></tr>';
+    document.getElementById('payHistKPI').innerHTML='';
+    return;
+  }
+  months.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;sel.appendChild(o);});
+  sel.value=months.includes(prevVal)?prevVal:months[0];
+  rPayHist();
+}
+function rPayHist(){
+  const hist=lph();
+  const ym=document.getElementById('payHistSel').value;
+  const entry=hist[ym];
+  const tb=document.getElementById('payHistB');tb.innerHTML='';
+  const rows=entry?.rows||[];
+  if(!rows.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:14px">لا بيانات</td></tr>';return;}
+  let tot=0;
+  rows.forEach(r=>{
+    tot+=r.net;
+    tb.innerHTML+=`<tr>
+      <td><strong>${r.name}</strong><br><span style="font-size:11px;color:var(--mu)">${r.job}</span></td>
+      <td>${r.daysPresent}/26</td>
+      <td>${r.salary.toLocaleString()}</td>
+      <td style="color:var(--g)">+${r.bonus}</td>
+      <td style="color:var(--r)">-${r.absenceDeduct.toFixed(0)}</td>
+      <td style="color:var(--r)">-${r.lateDeduct.toFixed(0)} <span style="font-size:10px">(${r.lateCount})</span></td>
+      <td style="color:var(--r)">-${r.unpaidLeaveDeduct.toFixed(0)}</td>
+      <td><strong style="color:var(--p)">${r.net.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')} EGP</strong></td></tr>`;
+  });
+  document.getElementById('payHistKPI').innerHTML=`
+    <div class="kc"><div class="kl">شهر ${ym} — إجمالي المعتمد</div><div class="kv">${tot.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div><div class="ks">EGP — مُقفل نهائياً</div></div>
+    <div class="kc"><div class="kl">تاريخ الاعتماد</div><div class="kv" style="font-size:14px">${entry.generatedAt.substring(0,10)}</div><div class="ks">تلقائي</div></div>`;
+}
+function exPayHist(){
+  const hist=lph();const ym=document.getElementById('payHistSel').value;
+  const rows=hist[ym]?.rows||[];
+  let csv='\uFEFF'+'الموظف,أيام الحضور,الراتب الأساسي,بدل حضور,خصم غياب,خصم تأخير,خصم إجازة بدون راتب,الصافي\n';
+  rows.forEach(r=>{csv+=`${r.name},${r.daysPresent},${r.salary},${r.bonus},${r.absenceDeduct.toFixed(0)},${r.lateDeduct.toFixed(0)},${r.unpaidLeaveDeduct.toFixed(0)},${r.net.toFixed(0)}\n`;});
+  dl(csv,'payroll_'+ym+'.csv');
 }
 
 // ── EMPLOYEE TABLE ──
@@ -1026,11 +1225,13 @@ function rEmpT(){
       <td>${e.job}</td>
       <td>${e.salary.toLocaleString()} EGP</td>
       <td dir="ltr">+${e.phone}</td>
+      <td><code style="background:#d0e8ff;padding:2px 7px;border-radius:5px;font-size:12px;direction:ltr;display:inline-block;">${e.username||'—'}</code></td>
       <td><code style="background:#fff3cd;padding:2px 7px;border-radius:5px;font-size:12px;">${e.initPw||'—'}</code></td>
       <td>${st}</td>
       <td style="display:flex;gap:4px;flex-wrap:wrap;">
         <button class="btn bsm bp" onclick="cpL('${u}')">📋</button>
         <button class="btn bsm ba" onclick="wL('${e.phone}','${e.name}','${u}','${e.initPw}')">💬</button>
+        <button class="btn bsm br2" onclick="setUsername('${e.id}','${e.name}')">👤</button>
         <button class="btn bsm br2" onclick="setInitPw('${e.id}','${e.name}')">🔄</button>
         <button class="btn bsm br2" onclick="delE('${e.id}')">🗑️</button>
       </td></tr>`;
@@ -1041,16 +1242,20 @@ function addEmp(){
   const j=document.getElementById('nJ').value.trim();
   const s=parseInt(document.getElementById('nS').value)||0;
   const p=document.getElementById('nP').value.trim().replace(/\D/g,'');
+  let u=document.getElementById('nU').value.trim().toLowerCase().replace(/\s+/g,'');
   const ip=document.getElementById('nIP').value.trim();
   const lt=parseInt(document.getElementById('nLT').value)||21;
   if(!n){showToast('❌ أدخل اسم الموظف','err');return;}
   if(!ip||ip.length<4){showToast('❌ أدخل كلمة سر مبدئية (4 أحرف على الأقل)','err');return;}
+  if(!u) u='emp'+(emps.length+1);
+  if(u.length<3){showToast('❌ اسم المستخدم قصير جداً (3 أحرف على الأقل)','err');return;}
+  if(emps.some(e=>e.username===u)){showToast('❌ اسم المستخدم مستخدم بالفعل — اختر اسماً آخر','err');return;}
   const id='e'+Date.now();const tok=btoa(id+'_opt'+Date.now());
   const cls=['#1a3c5e','#c8a84b','#27ae60','#e74c3c','#9b59b6','#3498db','#e67e22'];
-  emps.push({id,name:n,title:j,job:j,salary:s,phone:p,color:cls[emps.length%cls.length],token:tok,initPw:ip,leaveTotal:lt,leaveUsed:0});
+  emps.push({id,name:n,title:j,job:j,salary:s,phone:p,color:cls[emps.length%cls.length],token:tok,username:u,initPw:ip,leaveTotal:lt,leaveUsed:0});
   se(emps);rEmpT();rLinks();
-  ['nN','nJ','nS','nP','nIP','nLT'].forEach(x=>document.getElementById(x).value='');
-  showToast('✅ تمت الإضافة — الكلمة المبدئية: '+ip,'ok');
+  ['nN','nJ','nS','nP','nU','nIP','nLT'].forEach(x=>document.getElementById(x).value='');
+  showToast('✅ تمت الإضافة — اسم المستخدم: '+u+' | الكلمة المبدئية: '+ip,'ok');
 }
 function delE(id){emps=emps.filter(e=>e.id!==id);se(emps);rEmpT();rLinks();showToast('✅ تم الحذف','ok');}
 

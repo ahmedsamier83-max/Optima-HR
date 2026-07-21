@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول - Optima HR</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-ic">O</div>
+    <div><h1>Optima HR</h1><p>الحضور • الموقع الحي • الإجازات • الرواتب</p></div>
+  </div>
+  <div style="text-align:left"><div id="clk">--:--:--</div><div id="dt"></div></div>
+</header>
+
+<div class="wrap" style="max-width:400px;margin-top:60px;">
+  <div class="card" style="text-align:center;padding:34px;">
+    <div style="font-size:46px;margin-bottom:10px;">🔐</div>
+    <h2 style="font-size:19px;font-weight:700;color:var(--p);margin-bottom:6px;">تسجيل الدخول</h2>
+    <p style="font-size:12px;color:var(--mu);margin-bottom:22px;">للموظفين والمدير — اسم المستخدم وكلمة المرور</p>
+    <div class="fg" style="text-align:right"><label>اسم المستخدم</label><input id="username" placeholder="اسم المستخدم"></div>
+    <div class="fg" style="text-align:right"><label>كلمة المرور</label><input id="password" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="err" style="color:var(--r);font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+    <button class="btn bp bfl" onclick="doLogin()">دخول</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script>
+async function doLogin(){
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('err');
+  err.textContent='';
+  if(!username||!password){err.textContent='أدخل اسم المستخدم وكلمة المرور';return;}
+  try{
+    const data=await Api.post('/api/auth/login',{username,password});
+    Api.setSession(data);
+    if(data.mustChangePassword){
+      sessionStorage.setItem('optima_force_pw_change','1');
+    }
+    location.href = data.role==='admin' ? 'admin.html' : 'employee.html';
+  }catch(e){ err.textContent = e.message; }
+}
+</script>
+</body>
+</html>

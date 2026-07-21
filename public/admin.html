@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم المدير - Optima HR</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-ic">O</div>
+    <div><h1>Optima HR</h1><p>لوحة تحكم المدير</p></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div style="text-align:left"><div id="clk">--:--:--</div><div id="dt"></div></div>
+    <button class="btn br2 bsm" onclick="logout()">خروج</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('dash',this)">📊 لوحة القيادة</button>
+  <button class="tab" onclick="showTab('employees',this)">👥 الموظفون</button>
+  <button class="tab" onclick="showTab('live',this)">📍 الموقع الحي</button>
+  <button class="tab" onclick="showTab('leaves',this)">🌴 الإجازات</button>
+  <button class="tab" onclick="showTab('payroll',this)">💰 الرواتب</button>
+</div>
+
+<div class="wrap">
+
+  <!-- DASHBOARD -->
+  <div class="ap active" id="ap-dash">
+    <div class="kpi" id="dashKpi"></div>
+    <div class="card">
+      <div class="ct">🕒 آخر حركات الحضور</div>
+      <div class="tbl"><table>
+        <thead><tr><th>الموظف</th><th>النوع</th><th>التاريخ</th><th>الوقت</th></tr></thead>
+        <tbody id="recentAtt"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES -->
+  <div class="ap" id="ap-employees">
+    <div class="card">
+      <div class="ct">➕ إضافة موظف جديد</div>
+      <div class="fgrid">
+        <div class="fg"><label>الاسم الكامل</label><input id="neName"></div>
+        <div class="fg"><label>المسمى الوظيفي</label><input id="neTitle"></div>
+        <div class="fg"><label>الهاتف</label><input id="nePhone"></div>
+        <div class="fg"><label>البريد الإلكتروني</label><input id="neEmail"></div>
+        <div class="fg"><label>الراتب الأساسي الشهري</label><input id="neSalary" type="number"></div>
+        <div class="fg"><label>رصيد الإجازة السنوي</label><input id="neLeave" type="number" value="21"></div>
+      </div>
+      <button class="btn bp" onclick="addEmployee()">إضافة الموظف</button>
+    </div>
+    <div class="card">
+      <div class="ct">👥 قائمة الموظفين</div>
+      <div class="tbl"><table>
+        <thead><tr><th>الاسم</th><th>الوظيفة</th><th>اسم المستخدم</th><th>الراتب</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <tbody id="empRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- LIVE MAP -->
+  <div class="ap" id="ap-live">
+    <div class="card">
+      <div class="ct">📍 الموظفون الحاضرون الآن</div>
+      <div id="liveList"></div>
+    </div>
+    <div class="card" id="liveMapCard" style="display:none;">
+      <div class="ct" id="liveMapTitle">خريطة التتبع</div>
+      <div id="liveMap" class="map"></div>
+    </div>
+  </div>
+
+  <!-- LEAVES -->
+  <div class="ap" id="ap-leaves">
+    <div class="card">
+      <div class="ct">🌴 طلبات الإجازات</div>
+      <div style="margin-bottom:12px;">
+        <select id="lvFilter" onchange="loadLeaves()">
+          <option value="pending">قيد المراجعة</option>
+          <option value="approved">موافق عليها</option>
+          <option value="rejected">مرفوضة</option>
+          <option value="">الكل</option>
+        </select>
+      </div>
+      <div class="tbl"><table>
+        <thead><tr><th>الموظف</th><th>النوع</th><th>من</th><th>إلى</th><th>الأيام</th><th>السبب</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <tbody id="lvRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- PAYROLL -->
+  <div class="ap" id="ap-payroll">
+    <div class="card">
+      <div class="ct">💰 تشغيل الرواتب</div>
+      <p class="muted" style="margin-bottom:12px;">يتم تشغيل الرواتب تلقائياً في بداية كل شهر لشهر العمل السابق. يمكنك أيضاً تشغيلها يدوياً هنا.</p>
+      <div class="fgrid" style="max-width:400px;">
+        <div class="fg"><label>السنة</label><input id="pyYear" type="number"></div>
+        <div class="fg"><label>الشهر (1-12)</label><input id="pyMonth" type="number" min="1" max="12"></div>
+      </div>
+      <button class="btn bg" onclick="runPayroll()">▶️ تشغيل الرواتب لهذا الشهر</button>
+    </div>
+    <div class="card">
+      <div class="ct">📄 كشوف الرواتب السابقة</div>
+      <div class="tbl"><table>
+        <thead><tr><th>الشهر</th><th>عدد الموظفين</th><th>تاريخ التشغيل</th><th></th></tr></thead>
+        <tbody id="runRows"></tbody>
+      </table></div>
+    </div>
+    <div class="card" id="runDetailCard" style="display:none;">
+      <div class="ct" id="runDetailTitle">تفاصيل الكشف</div>
+      <div class="tbl"><table>
+        <thead><tr><th>الموظف</th><th>الراتب الأساسي</th><th>أيام العمل</th><th>الحضور</th><th>بدون أجر</th><th>الخصومات</th><th>الصافي</th></tr></thead>
+        <tbody id="runDetailRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

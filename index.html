@@ -232,7 +232,7 @@ tr:hover td{background:#f8fafc;}
       </div>
       <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
         <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
-        <div>اسحب الملف <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">attendance_v5.html</code> وأفلته في المنطقة الزرقاء</div>
+        <div>اسحب الملف <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">index.html</code> وأفلته في المنطقة الزرقاء (يفضّل رفعه داخل مجلد ليأخذ اسم <code style="background:#eef3f9;padding:2px 6px;border-radius:4px;">index.html</code> كصفحة رئيسية تلقائياً)</div>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
         <div style="min-width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
@@ -807,13 +807,12 @@ function buildURLs(){
   if(!container) return;
 
   // إذا لم يُدخل عنوان بعد — أظهر placeholder
-  const fileName='attendance_v5.html';
   const displayBase=base||'https://ahmedsamier83-max.github.io/Optima-HR';
   const isReal=base.startsWith('http');
 
   container.innerHTML='';
   emps.forEach(e=>{
-    const url=`${displayBase}/${fileName}?t=${encodeURIComponent(e.token)}`;
+    const url=`${displayBase}/?t=${encodeURIComponent(e.token)}`;
     const pws=lpw();
     const rec=pws[e.id];
     const pwStatus=!rec?'⏳ لم يدخل بعد':!rec.changed?'🔑 أدخل المبدئية فقط':'✅ كلمة سر شخصية';

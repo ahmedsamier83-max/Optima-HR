@@ -61,24 +61,58 @@ on first login).
 | `JWT_SECRET` | Secret used to sign login sessions — set a long random value |
 | `DB_PATH` | Path to the SQLite database file |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Created once, on first run, if no admin exists yet |
-| `PAYROLL_CRON` | Cron schedule for automatic payroll (default: `0 3 1 * *` = 03:00 on the 1st of every month, server time) |
+| `PAYROLL_CRON` | Cron schedule for the in-process automatic payroll job (default: `0 3 1 * *` = 03:00 on the 1st of every month, server time). Only reliable on hosts that stay running — see the Render section below for hosts that sleep the app. |
+| `CRON_SECRET` | Shared secret for `POST /api/payroll/cron-trigger`, used by an external scheduler (e.g. GitHub Actions) to run payroll on hosts where the process can be asleep. Leave unset to disable that endpoint. |
 | `LOCATION_PING_MINUTES` | How often an employee's browser sends a live GPS ping while clocked in |
 
-## Deploying so payroll actually runs "automatically"
+## Deploying to Render (free tier)
 
-The monthly payroll cron only fires while the Node process is running, so it
-needs to run on a server that stays up — not just on your laptop. Any of
-these work with zero code changes:
+`render.yaml` in this repo is a Render "Blueprint" — Render reads it
+automatically and sets up the service for you:
 
-- **Render / Railway / Fly.io** — push this repo, set the env vars above,
-  point the start command at `npm start`. Attach a persistent volume for
-  `data/` (the SQLite file) so it isn't wiped on redeploy.
+1. Push this repo to GitHub (already done if you're reading this from the repo).
+2. In the Render dashboard: **New > Blueprint**, pick this repo. Render finds
+   `render.yaml` and shows the `optima-hr` web service.
+3. It'll prompt you for the env vars marked `sync: false` — set:
+   - `ADMIN_USERNAME` / `ADMIN_PASSWORD` — your admin login for the deployed app
+   - `CRON_SECRET` — any long random string (see step 5)
+4. Deploy. Render builds with `npm install` and starts with `npm start`. Once
+   live, your app is at `https://<service-name>.onrender.com`.
+5. **Free tier has no persistent disk**, so the SQLite file can be wiped on
+   redeploy, and the app can be put to sleep after ~15 minutes idle — which
+   also means the in-process monthly payroll cron isn't guaranteed to fire if
+   the app happens to be asleep at 3am on the 1st. To cover that for free,
+   this repo includes `.github/workflows/monthly-payroll.yml`, a GitHub
+   Actions workflow that pings the app once a month to wake it and run
+   payroll. Set these two repo secrets (GitHub repo → Settings → Secrets and
+   variables → Actions):
+   - `APP_URL` — your Render URL, e.g. `https://optima-hr.onrender.com`
+   - `CRON_SECRET` — the same value you set in Render's env vars in step 3
+
+   You can test it immediately without waiting for the schedule: go to the
+   workflow's Actions tab and click "Run workflow".
+
+If you outgrow the free tier's data-loss risk, upgrade to a paid Render plan
+and attach a Render Disk mounted over the `data/` directory (uncomment the
+`disk:` block you'd add to `render.yaml`) — the SQLite file then survives
+redeploys and the built-in `node-cron` schedule becomes reliable on its own
+(you can drop the GitHub Actions workflow at that point, or just leave it as
+a harmless backup).
+
+## Deploying elsewhere
+
+- **Railway / Fly.io** — same idea as Render: push this repo, set the env
+  vars from the table above, start command `npm start`. Attach a persistent
+  volume for `data/` if the platform's free tier doesn't wipe disk on deploy.
 - **A VPS** (DigitalOcean, Hetzner, etc.) — `git clone`, `npm install --omit=dev`,
-  run with `pm2` or a systemd service so it restarts on crash/reboot.
+  run with `pm2` or a systemd service so it restarts on crash/reboot. A VPS
+  stays running continuously, so the built-in `node-cron` schedule alone is
+  reliable — no external trigger needed.
 
-If you'd rather not run a background process, disable `PAYROLL_CRON` and call
-`POST /api/payroll/generate` yourself once a month (e.g. from your own
-machine's cron, or the admin dashboard's "تشغيل الرواتب" button).
+If you'd rather not run any background process at all, leave `CRON_SECRET`
+unset and call `POST /api/payroll/generate` yourself once a month instead
+(e.g. from your own machine's cron, or the admin dashboard's "تشغيل الرواتب"
+button).
 
 ## Notes on live location tracking
 
@@ -98,4 +132,4 @@ sent as `Authorization: Bearer <token>` on every other request.
 - `employees` (admin only): list/create/update/deactivate, reset-password
 - `attendance`: checkin/checkout/status/me/ping (employee); list/live/live/:id (admin)
 - `leaves`: create/me/balance/cancel (employee); list/decide (admin)
-- `payroll`: generate/runs (admin); me (employee)
+- `payroll`: generate/runs (admin); me (employee); cron-trigger (external scheduler, `X-Cron-Secret` header)

@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: optima-hr
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /login.html
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: ./data/optima.db
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PAYROLL_CRON
+        value: 0 3 1 * *
+      - key: LOCATION_PING_MINUTES
+        value: "2"
+      - key: CRON_SECRET
+        sync: false
+
+# NOTE on the free plan: Render's free web services do not support a
+# persistent disk, so this SQLite database can be wiped on redeploy (and
+# possibly on other platform maintenance). Fine for trying the system out;
+# for real payroll/attendance records, upgrade to a paid plan and add a
+# Render Disk mounted at the DB_PATH directory, or migrate to Postgres.

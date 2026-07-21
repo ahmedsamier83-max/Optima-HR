@@ -1,0 +1,28 @@
+name: Trigger monthly payroll
+
+# Runs on the 1st of every month at 03:10 UTC and calls the deployed app's
+# external payroll trigger. Exists because free/sleep-tier hosts (e.g.
+# Render's free plan) can put the app to sleep between requests, so the
+# app's own internal cron schedule isn't guaranteed to fire on time.
+#
+# Setup: in the repo's Settings > Secrets and variables > Actions, add:
+#   APP_URL     — e.g. https://optima-hr.onrender.com
+#   CRON_SECRET — must match the CRON_SECRET env var set on the server
+on:
+  schedule:
+    - cron: '10 3 1 * *'
+  workflow_dispatch: {}
+
+jobs:
+  trigger-payroll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call payroll cron-trigger endpoint
+        run: |
+          if [ -z "${{ secrets.APP_URL }}" ] || [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "APP_URL and/or CRON_SECRET repo secrets are not set — skipping." >&2
+            exit 1
+          fi
+          curl -sS -f -X POST "${{ secrets.APP_URL }}/api/payroll/cron-trigger" \
+            -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"

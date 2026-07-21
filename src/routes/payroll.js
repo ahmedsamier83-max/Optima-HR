@@ -1,9 +1,35 @@
 const express = require('express');
+const crypto = require('crypto');
 const db = require('../db/init');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { generatePayrollRun, previousPeriod } = require('../services/payrollService');
 
 const router = express.Router();
+
+function timingSafeEqual(a, b) {
+  const bufA = Buffer.from(String(a)); const bufB = Buffer.from(String(b));
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+// ── external cron trigger ──
+// Lets a scheduler outside this process (e.g. a GitHub Actions workflow)
+// wake the app and run payroll on hosts where the process can be put to
+// sleep between requests (Render free tier, etc.), so the in-process
+// node-cron schedule alone can't be relied on. Protected by a shared
+// secret instead of a login session, since an external scheduler can't
+// hold a short-lived JWT.
+router.post('/cron-trigger', (req, res) => {
+  const secret = process.env.CRON_SECRET;
+  const provided = req.headers['x-cron-secret'];
+  if (!secret) return res.status(503).json({ error: 'CRON_SECRET غير مضبوط على الخادم' });
+  if (!provided || !timingSafeEqual(provided, secret)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const { year, month } = previousPeriod();
+  const slips = generatePayrollRun(year, month, 'system:external-cron');
+  res.json({ year, month, count: slips.length });
+});
 
 // ── admin-facing ──
 

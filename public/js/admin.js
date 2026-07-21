@@ -17,12 +17,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function logout() { Api.clearSession(); location.href = 'login.html'; }
 
+const TAB_LOADERS = {
+  dash: loadDashboard,
+  employees: loadEmployees,
+  live: refreshLiveMapIfOpen,
+  leaves: loadLeaves,
+  payroll: loadRuns,
+};
+
 function showTab(name, btn) {
   document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
   document.querySelectorAll('.ap').forEach((p) => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('ap-' + name).classList.add('active');
-  if (name === 'live') refreshLiveMapIfOpen();
+  // re-fetch this tab's data every time it's opened — leave requests, live
+  // status, and employees can change from other sessions while this page sits idle
+  const loader = TAB_LOADERS[name];
+  if (loader) loader();
 }
 
 // ── dashboard ──

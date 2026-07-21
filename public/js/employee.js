@@ -17,11 +17,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function logout() { Api.clearSession(); location.href = 'login.html'; }
 
+const TAB_LOADERS = {
+  attendance: refreshStatus,
+  leaves: loadLeaveTab,
+  payroll: loadPayroll,
+};
+
 function showTab(name, btn) {
   document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
   document.querySelectorAll('.ap').forEach((p) => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('ap-' + name).classList.add('active');
+  // re-fetch this tab's data every time it's opened (e.g. admin may have
+  // approved a leave request while this tab sat open in the background)
+  const loader = TAB_LOADERS[name];
+  if (loader) loader();
 }
 
 async function loadMe() {

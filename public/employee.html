@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوابة الموظف - Optima HR</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-ic">O</div>
+    <div><h1>Optima HR</h1><p>بوابة الموظف</p></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div style="text-align:left"><div id="clk">--:--:--</div><div id="dt"></div></div>
+    <button class="btn br2 bsm" onclick="logout()">خروج</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('attendance',this)">🕒 الحضور</button>
+  <button class="tab" onclick="showTab('leaves',this)">🌴 الإجازات</button>
+  <button class="tab" onclick="showTab('payroll',this)">💰 الراتب</button>
+  <button class="tab" onclick="showTab('settings',this)">⚙️ الإعدادات</button>
+</div>
+
+<div class="wrap">
+
+  <div class="ehero">
+    <div class="eavtr" id="eAvatar">?</div>
+    <h2 id="eName">—</h2>
+    <p id="eTitle">—</p>
+  </div>
+
+  <!-- ATTENDANCE TAB -->
+  <div class="ap active" id="ap-attendance">
+    <div class="card center">
+      <div id="statusPill" class="pill off">غير مسجل حضور</div>
+      <div class="locb" style="text-align:right">
+        <div class="ico">📍</div>
+        <div><div class="lbl">الموقع الحالي</div><div class="val" id="locVal">جاري تحديد الموقع...</div></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+        <button class="btn bg" id="btnIn" onclick="doCheckin()">✅ تسجيل حضور</button>
+        <button class="btn br2" id="btnOut" onclick="doCheckout()" disabled>🚪 تسجيل انصراف</button>
+      </div>
+      <p class="muted" id="liveNote" style="margin-top:12px;"></p>
+    </div>
+
+    <div class="card">
+      <div class="ct">📋 سجل اليوم والأخير</div>
+      <div class="tbl"><table>
+        <thead><tr><th>النوع</th><th>التاريخ</th><th>الوقت</th><th>الموقع</th></tr></thead>
+        <tbody id="attRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- LEAVES TAB -->
+  <div class="ap" id="ap-leaves">
+    <div class="kpi" id="leaveKpi"></div>
+    <div class="card">
+      <div class="ct">➕ طلب إجازة جديدة</div>
+      <div class="fgrid">
+        <div class="fg"><label>نوع الإجازة</label>
+          <select id="lvType"><option value="annual">سنوية</option><option value="sick">مرضية</option><option value="unpaid">بدون راتب</option><option value="other">أخرى</option></select>
+        </div>
+        <div class="fg"><label>من تاريخ</label><input type="date" id="lvStart"></div>
+        <div class="fg"><label>إلى تاريخ</label><input type="date" id="lvEnd"></div>
+      </div>
+      <div class="fg"><label>السبب (اختياري)</label><textarea id="lvReason" rows="2"></textarea></div>
+      <button class="btn bp" onclick="requestLeave()">إرسال الطلب</button>
+    </div>
+    <div class="card">
+      <div class="ct">📄 طلباتي</div>
+      <div class="tbl"><table>
+        <thead><tr><th>النوع</th><th>من</th><th>إلى</th><th>الأيام</th><th>الحالة</th><th></th></tr></thead>
+        <tbody id="lvRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- PAYROLL TAB -->
+  <div class="ap" id="ap-payroll">
+    <div class="card">
+      <div class="ct">💰 كشوف الرواتب</div>
+      <div class="tbl"><table>
+        <thead><tr><th>الشهر</th><th>الراتب الأساسي</th><th>أيام العمل</th><th>أيام الحضور</th><th>أيام بدون أجر</th><th>الخصومات</th><th>الصافي</th></tr></thead>
+        <tbody id="paySlipRows"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="ap" id="ap-settings">
+    <div class="card" style="max-width:420px;">
+      <div class="ct">🔑 تغيير كلمة المرور</div>
+      <div class="fg"><label>كلمة المرور الحالية</label><input type="password" id="curPw"></div>
+      <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" id="newPw"></div>
+      <button class="btn bp bfl" onclick="changePassword()">تحديث كلمة المرور</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/employee.js"></script>
+</body>
+</html>
